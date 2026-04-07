@@ -1,3 +1,10 @@
 spring:
   application:
     name: electric-scooter-rental
+  liquibase:
+    change-log: classpath:/db/changelog/changelog.yaml
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:6541/scooters
+    username: postgres
+    password: postgres
