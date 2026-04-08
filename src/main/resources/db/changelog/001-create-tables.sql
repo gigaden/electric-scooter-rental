@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS scooters
     updated_on    TIMESTAMP WITH TIME ZONE DEFAULT current_timestamp NOT NULL
 );
 
--- табличка содержит тарифы, почасовые, подписку
+-- табличка содержит тарифы, почасовые/подписку
 CREATE TABLE tariffs
 (
     id        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -92,7 +92,7 @@ CREATE TABLE user_subscriptions
     start_date TIMESTAMP WITH TIME ZONE DEFAULT now(),
     end_date   TIMESTAMP WITH TIME ZONE NOT NULL,
     status     VARCHAR(50)              DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'EXPIRED', 'CANCELLED')),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+    created_on TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
 -- сводная табличка, которая будет хранить в себе историю аренды
