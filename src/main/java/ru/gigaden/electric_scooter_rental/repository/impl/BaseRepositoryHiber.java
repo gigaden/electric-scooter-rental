@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * Базовый репозиторий для работы с сущностями
- * */
+ */
 @Repository
 @Slf4j
 public abstract class BaseRepositoryHiber<T, PK extends Serializable> {
@@ -45,33 +45,20 @@ public abstract class BaseRepositoryHiber<T, PK extends Serializable> {
         }
     }
 
-    protected void delete(PK id) {
+    protected void delete(T entity) {
         try {
-            T entity = entityManager.find(type, id);
             if (entity != null) {
                 entityManager.remove(entity);
             }
         } catch (HibernateException e) {
-            log.error("Ошибка БД при удалении {} с id: {}", type.getSimpleName(), id, e);
+            log.error("Ошибка БД при удалении {} : {}", type.getSimpleName(), entity, e);
             throw new DatabaseException("Ошибка удаления сущности " + type.getSimpleName() + " " + e);
-        }
-    }
-
-    protected List<T> findAll() {
-        try {
-            log.debug("Пытаюсь получить все записи {}", type.getSimpleName());
-            String jpql = "SELECT e FROM " + type.getSimpleName() + " e";
-            TypedQuery<T> query = entityManager.createQuery(jpql, type);
-            return query.getResultList();
-        } catch (HibernateException e) {
-            log.error("Ошибка БД при получении записей {}", type.getSimpleName(), e);
-            throw new DatabaseException("Ошибка получения списка " + type.getSimpleName() + " " + e);
         }
     }
 
     protected List<T> findAll(int page, int size, String sortBy) {
         try {
-            String jpql = "SELECT e FROM " + type.getSimpleName() + " e ORDER BY e." + sortBy;
+            String jpql = "SELECT e FROM " + type.getSimpleName() + " e ORDER BY e." + sortBy + " DESC";
             TypedQuery<T> query = entityManager.createQuery(jpql, type)
                     .setFirstResult(page * size)
                     .setMaxResults(size);

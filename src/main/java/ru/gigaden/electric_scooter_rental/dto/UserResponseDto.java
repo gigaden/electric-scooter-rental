@@ -9,7 +9,7 @@ import java.util.UUID;
 
 /**
  * Дто пользователя для ответа клиенту
- * */
+ */
 @Schema(description = "Дто с данными пользователя для клиента")
 public record UserResponseDto(UUID id,
                               String username,

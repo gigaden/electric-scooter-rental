@@ -40,8 +40,8 @@ public class UserRepositoryImpl extends BaseRepositoryHiber<User, UUID> implemen
     }
 
     @Override
-    public void deleteUserById(UUID id) {
-        delete(id);
+    public void deleteUserByEntity(User user) {
+        delete(user);
     }
 
     @Override
@@ -51,11 +51,12 @@ public class UserRepositoryImpl extends BaseRepositoryHiber<User, UUID> implemen
 
     /**
      * Проверяем уникальность имени пользователя
+     *
      * @param username - имя пользователя
-     * */
+     */
     @Override
     public boolean checkUsernameIsUnique(String username) {
-        String jpql ="SELECT u FROM User u WHERE u.username = :username";
+        String jpql = "SELECT u FROM User u WHERE u.username = :username";
         TypedQuery<User> query = entityManager.createQuery(jpql, User.class);
         query.setParameter("username", username);
 
@@ -64,8 +65,9 @@ public class UserRepositoryImpl extends BaseRepositoryHiber<User, UUID> implemen
 
     /**
      * Проверяем уникальность email
+     *
      * @param email - email
-     * */
+     */
     @Override
     public boolean checkEmailIsUnique(String email) {
         String jpql = "SELECT u FROM User u WHERE u.email = :email";

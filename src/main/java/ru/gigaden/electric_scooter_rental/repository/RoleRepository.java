@@ -6,7 +6,7 @@ import java.util.Optional;
 
 /**
  * Репозиторий для управления ролями пользователей
- * */
+ */
 public interface RoleRepository {
 
     Optional<Role> findRoleByName(String name);

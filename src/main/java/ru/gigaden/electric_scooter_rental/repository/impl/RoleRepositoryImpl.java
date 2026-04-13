@@ -10,7 +10,7 @@ import java.util.UUID;
 
 /**
  * Реализация репозитория ролей пользователя
- * */
+ */
 @Repository
 public class RoleRepositoryImpl extends BaseRepositoryHiber<Role, UUID> implements RoleRepository {
 
@@ -20,9 +20,10 @@ public class RoleRepositoryImpl extends BaseRepositoryHiber<Role, UUID> implemen
 
     /**
      * Ищет роль по её имени
+     *
      * @param name - название роли
      * @return - роль, или пустой Optional
-     * */
+     */
     @Override
     public Optional<Role> findRoleByName(String name) {
         String jpql = "SELECT r FROM Role r WHERE name = :name";

@@ -19,7 +19,7 @@ public interface UserRepository {
 
     User updateUser(User user);
 
-    void deleteUserById(UUID id);
+    void deleteUserByEntity(User user);
 
     boolean checkUserIsExistById(UUID id);
 
