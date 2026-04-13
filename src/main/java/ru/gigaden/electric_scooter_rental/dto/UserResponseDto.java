@@ -1,5 +1,6 @@
 package ru.gigaden.electric_scooter_rental.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import ru.gigaden.electric_scooter_rental.entity.Role;
 
 import java.time.LocalDateTime;
@@ -9,6 +10,7 @@ import java.util.UUID;
 /**
  * Дто пользователя для ответа клиенту
  * */
+@Schema(description = "Дто с данными пользователя для клиента")
 public record UserResponseDto(UUID id,
                               String username,
                               String email,

@@ -46,9 +46,10 @@ public class UserController {
      * Получаем пользователя по его id
      */
     @GetMapping("/{userId}")
+    @Operation(summary = "Получение пользователя", description = "Получение пользователя по его id")
     public ResponseEntity<UserResponseDto> getUser(@PathVariable UUID userId) {
         log.info("Получаем пользователя с id = {}", userId);
-        UserResponseDto response = userService.getUserById(userId);
+        UserResponseDto response = userService.findUserById(userId);
 
         return ResponseEntity.ok(response);
     }

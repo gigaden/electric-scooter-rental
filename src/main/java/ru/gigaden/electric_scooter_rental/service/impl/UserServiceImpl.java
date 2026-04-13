@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
      * @throws ru.gigaden.electric_scooter_rental.exception.UserNotFoundException если пользователь не найден
      */
     @Override
-    public UserResponseDto getUserById(UUID id) {
+    public UserResponseDto findUserById(UUID id) {
         User user = getRowUserOrThrow(id);
         UserResponseDto response = userMapper.mapUserToResponseDto(user);
         log.info("Получили пользователя с id = {}", id);

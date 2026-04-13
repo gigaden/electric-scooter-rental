@@ -12,5 +12,5 @@ public interface UserService {
 
     UserResponseDto addUser(UserCreateDto dto);
 
-    UserResponseDto getUserById(UUID id);
+    UserResponseDto findUserById(UUID id);
 }
