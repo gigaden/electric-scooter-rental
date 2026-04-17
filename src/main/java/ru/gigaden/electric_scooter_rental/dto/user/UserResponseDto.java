@@ -1,4 +1,4 @@
-package ru.gigaden.electric_scooter_rental.dto;
+package ru.gigaden.electric_scooter_rental.dto.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import ru.gigaden.electric_scooter_rental.entity.Role;

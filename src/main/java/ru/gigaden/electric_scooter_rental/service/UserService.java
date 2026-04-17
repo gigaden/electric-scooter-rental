@@ -1,8 +1,8 @@
 package ru.gigaden.electric_scooter_rental.service;
 
-import ru.gigaden.electric_scooter_rental.dto.UserCreateDto;
-import ru.gigaden.electric_scooter_rental.dto.UserResponseDto;
-import ru.gigaden.electric_scooter_rental.dto.UserUpdateDto;
+import ru.gigaden.electric_scooter_rental.dto.user.UserCreateDto;
+import ru.gigaden.electric_scooter_rental.dto.user.UserResponseDto;
+import ru.gigaden.electric_scooter_rental.dto.user.UserUpdateDto;
 import ru.gigaden.electric_scooter_rental.entity.UserSortField;
 
 import java.util.Collection;

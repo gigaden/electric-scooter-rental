@@ -5,6 +5,8 @@ import org.springframework.stereotype.Repository;
 import ru.gigaden.electric_scooter_rental.entity.Role;
 import ru.gigaden.electric_scooter_rental.repository.RoleRepository;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,6 +18,12 @@ public class RoleRepositoryImpl extends BaseRepositoryHiber<Role, UUID> implemen
 
     protected RoleRepositoryImpl() {
         super(Role.class);
+    }
+
+
+    @Override
+    public Role saveRole(Role role) {
+        return save(role);
     }
 
     /**
@@ -32,5 +40,45 @@ public class RoleRepositoryImpl extends BaseRepositoryHiber<Role, UUID> implemen
         Role role = query.getSingleResult();
 
         return Optional.ofNullable(role);
+    }
+
+    /**
+     * Ищет роль по её id
+     *
+     * @param id - id роли
+     * @return - роль, или пустой Optional
+     */
+    @Override
+    public Optional<Role> findRoleById(UUID id) {
+        return Optional.ofNullable(find(id));
+    }
+
+    /**
+     * Обновляем роль
+     */
+    @Override
+    public Role updateRole(Role role) {
+        return update(role);
+    }
+
+    /**
+     * Получаем все возможные роли
+     * */
+    @Override
+    public Collection<Role> findAll() {
+        String jpql = "SELECT r FROM Role r";
+        TypedQuery<Role> query = entityManager.createQuery(jpql, Role.class);
+
+        return query.getResultList();
+    }
+
+    /**
+     * Метод удаляет роль
+     *
+     * @param role - роль, которую нужно удалить
+     */
+    @Override
+    public void deleteRole(Role role) {
+        delete(role);
     }
 }

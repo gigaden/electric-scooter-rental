@@ -1,18 +1,16 @@
-package ru.gigaden.electric_scooter_rental.dto;
+package ru.gigaden.electric_scooter_rental.dto.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
 
 /**
- * Dto для создания пользователя
+ * Dto для обновления пользователя
  */
-@Builder
-@Schema(description = "Дто для создания нового пользователя")
-public record UserCreateDto(
+@Schema(description = "Дто для обновления данных пользователя")
+public record UserUpdateDto(
         @NotNull(message = "Имя пользователя должно быть указано")
         @NotBlank(message = "Имя пользователя не должно быть пустыми")
         @Size(min = 3, max = 128, message = "Имя пользователя должно быть от 3 до 128 символов")

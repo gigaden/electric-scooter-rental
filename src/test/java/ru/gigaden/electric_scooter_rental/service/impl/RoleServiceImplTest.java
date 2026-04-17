@@ -57,4 +57,32 @@ class RoleServiceImplTest {
         assertThrows(RoleNotFoundException.class, () -> roleService.findRowRoleByNameOrThrow("GODFATHER"));
     }
 
+    @Test
+    @DisplayName("Поиск роли по её id")
+    void findRoleByIdShouldBePositive() {
+        String roleName = "USER";
+        UUID id = UUID.randomUUID();
+        Role expectedRole = Role.builder()
+                .id(id)
+                .name(roleName)
+                .build();
+
+        when(roleRepository.findRoleById(id)).thenReturn(Optional.of(expectedRole));
+
+        Role result = roleService.findRowRoleByIdOrThrow(id);
+
+        assertEquals(id, result.getId());
+        verify(roleRepository).findRoleById(id);
+
+    }
+
+    @Test
+    @DisplayName("Роль по id не найдена - выброс исключения")
+    void findRoleShouldThrowWhenRoleIdNotFound() {
+
+        when(roleRepository.findRoleById(any())).thenReturn(Optional.empty());
+
+        assertThrows(RoleNotFoundException.class, () -> roleService.findRowRoleByIdOrThrow(UUID.randomUUID()));
+    }
+
 }
