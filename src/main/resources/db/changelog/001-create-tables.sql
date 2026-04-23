@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS rental_points
     address     VARCHAR(1024) UNIQUE                               NOT NULL,
     latitude    DECIMAL(9, 6)                                      NOT NULL,
     longitude   DECIMAL(9, 6)                                      NOT NULL,
-    description VARCHAR(1024),
+    description VARCHAR(2048),
     added_on    TIMESTAMP WITH TIME ZONE DEFAULT current_timestamp NOT NULL,
     updated_on  TIMESTAMP WITH TIME ZONE DEFAULT current_timestamp NOT NULL
 

@@ -1,0 +1,22 @@
+package ru.gigaden.electric_scooter_rental.repository;
+
+import ru.gigaden.electric_scooter_rental.entity.RentalPoint;
+
+import java.util.Collection;
+import java.util.Optional;
+import java.util.UUID;
+
+/**
+ * Репозиторий для работы с точками аренды
+ */
+public interface RentalPointRepository {
+    RentalPoint saveRentalPoint(RentalPoint rentalPoint);
+
+    Optional<RentalPoint> findRentalPointById(UUID id);
+
+    Collection<RentalPoint> findAllRentalPoints(int page, int size, String sortBy);
+
+    RentalPoint updateRentalPoint(RentalPoint rentalPoint);
+
+    void deleteRentalPoint(RentalPoint rentalPoint);
+}

@@ -7,6 +7,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -50,7 +52,7 @@ public class RentalPoint {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "added_on", nullable = false)
+    @Column(name = "added_on", updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime addedOn;
 
@@ -60,4 +62,15 @@ public class RentalPoint {
 
     @OneToMany(mappedBy = "rentalPoint")
     private List<Scooter> scooters = new ArrayList<>();
+
+    @PrePersist
+    protected void onCreate() {
+        addedOn = LocalDateTime.now();
+        updatedOn = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedOn = LocalDateTime.now();
+    }
 }

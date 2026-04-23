@@ -25,12 +25,10 @@ public class ErrorHandler {
     private static final Logger log = LoggerFactory.getLogger(ErrorHandler.class);
 
     @ExceptionHandler({
-            //BookNotFoundException.class,
             UserNotFoundException.class,
             UserNotUniqueException.class,
-            RoleNotFoundException.class
-            //OrderNotFoundException.class,
-            //RequestNotFoundException.class
+            RoleNotFoundException.class,
+            RentalPointNotFoundException.class
     })
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFoundException(final BaseException e, WebRequest request) {
