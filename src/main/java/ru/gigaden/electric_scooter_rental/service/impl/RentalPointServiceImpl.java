@@ -10,6 +10,7 @@ import ru.gigaden.electric_scooter_rental.dto.point.RentalPointUpdateDto;
 import ru.gigaden.electric_scooter_rental.entity.RentalPoint;
 import ru.gigaden.electric_scooter_rental.entity.RentalPointSortField;
 import ru.gigaden.electric_scooter_rental.exception.RentalPointNotFoundException;
+import ru.gigaden.electric_scooter_rental.exception.UserNotFoundException;
 import ru.gigaden.electric_scooter_rental.mapper.RentalPointMapper;
 import ru.gigaden.electric_scooter_rental.repository.RentalPointRepository;
 import ru.gigaden.electric_scooter_rental.service.RentalPointService;
@@ -62,19 +63,74 @@ public class RentalPointServiceImpl implements RentalPointService {
         return response;
     }
 
+    /**
+     * Получаем все точки аренды с пагинацией и сортировкой
+     *
+     * @param page - номер страницы
+     * @param size - размер
+     * @param sortField - поле, по которому сортируем
+     */
     @Override
     public Collection<RentalPointResponseDto> findAllRentalPoints(int page, int size, RentalPointSortField sortField) {
-        return List.of();
+        Collection<RentalPointResponseDto> points = rentalPointRepository
+                .findAllRentalPoints(page, size, sortField.name()).stream()
+                .map(pointMapper::mapRentalPointToResponse)
+                .toList();
+        log.info("Получили список точек аренды page = {}, size = {}, sort = {}", page, size, sortField);
+
+        return points;
     }
 
+    /**
+     * Метод обновляет точку аренды по её id
+     *
+     * @param id - id точки аренды
+     * @param dto    - данные для обновления
+     * @throws RentalPointNotFoundException - если точка аренды не найдена
+     */
     @Override
+    @Transactional
     public RentalPointResponseDto updateRentalPoint(UUID id, RentalPointUpdateDto dto) {
-        return null;
+        RentalPoint rentalPoint = findRowRentalPointOrThrow(id);
+        updateRentalPointFields(rentalPoint, dto);
+        RentalPoint updated = rentalPointRepository.updateRentalPoint(rentalPoint);
+        RentalPointResponseDto response = pointMapper.mapRentalPointToResponse(updated);
+        log.info("Точка аренды с id = {} обновлена", id);
+
+        return response;
     }
 
+    /**
+     * Обновляем сущность точки аренды данными из дто
+     */
+    private void updateRentalPointFields(RentalPoint rentalPoint, RentalPointUpdateDto dto) {
+        if (dto.address() != null) {
+            rentalPoint.setAddress(dto.address());
+        }
+        if (dto.latitude() != null) {
+            rentalPoint.setLatitude(dto.latitude());
+        }
+        if (dto.longitude() != null) {
+            rentalPoint.setLongitude(dto.longitude());
+        }
+        if (dto.description() != null) {
+            rentalPoint.setDescription(dto.description());
+        }
+    }
+
+    /**
+     * Метод удаляет точку аренды id
+     *
+     * @param id - id точки аренды
+     * @throws RentalPointNotFoundException - если точка аренды не найдена
+     */
+    @Transactional
     @Override
     public void deleteRentalPointById(UUID id) {
+        RentalPoint rentalPoint = findRowRentalPointOrThrow(id);
+        rentalPointRepository.deleteRentalPoint(rentalPoint);
 
+        log.info("Точка аренды с id = {} удалена", id);
     }
 
     /**

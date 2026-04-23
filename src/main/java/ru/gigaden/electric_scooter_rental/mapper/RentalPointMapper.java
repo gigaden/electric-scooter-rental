@@ -5,7 +5,7 @@ import ru.gigaden.electric_scooter_rental.dto.point.RentalPointCreateDto;
 import ru.gigaden.electric_scooter_rental.dto.point.RentalPointResponseDto;
 import ru.gigaden.electric_scooter_rental.entity.RentalPoint;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {ScooterMapper.class})
 public interface RentalPointMapper {
 
     RentalPoint mapCreateToRentalPoint(RentalPointCreateDto dto);

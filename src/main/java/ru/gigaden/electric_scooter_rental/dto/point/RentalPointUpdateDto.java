@@ -11,7 +11,7 @@ import jakarta.validation.constraints.Size;
 @Schema(description = "Дто для обновления точки аренды")
 public record RentalPointUpdateDto(@NotNull(message = "Адрес должен быть указан")
                                    @NotBlank(message = "Поле с адресом не должно быть пустыми")
-                                   @Size(min = 64, max = 1024, message = "Поле с адресом должно быть от 64 до 1024 символов")
+                                   @Size(min = 16, max = 1024, message = "Поле с адресом должно быть от 16 до 1024 символов")
                                    @Schema(description = "Адрес", example = "Н.Новгород, Бурнаковская 103")
                                    String address,
 
@@ -25,7 +25,7 @@ public record RentalPointUpdateDto(@NotNull(message = "Адрес должен �
 
                                    @NotNull(message = "Описание должно быть указано")
                                    @NotBlank(message = "Поле с описанием не должно быть пустыми")
-                                   @Size(min = 64, max = 2048, message = "Поле с описанием должно быть от 64 до 2048 символов")
+                                   @Size(min = 16, max = 2048, message = "Поле с описанием должно быть от 16 до 2048 символов")
                                    @Schema(description = "Описание точки", example = "Описание точки аренды")
                                    String description) {
 }
