@@ -3,6 +3,7 @@ package ru.gigaden.electric_scooter_rental.service;
 import ru.gigaden.electric_scooter_rental.dto.point.RentalPointCreateDto;
 import ru.gigaden.electric_scooter_rental.dto.point.RentalPointResponseDto;
 import ru.gigaden.electric_scooter_rental.dto.point.RentalPointUpdateDto;
+import ru.gigaden.electric_scooter_rental.entity.RentalPoint;
 import ru.gigaden.electric_scooter_rental.entity.RentalPointSortField;
 
 import java.util.Collection;
@@ -16,6 +17,8 @@ public interface RentalPointService {
     RentalPointResponseDto addRentalPoint(RentalPointCreateDto dto);
 
     RentalPointResponseDto findRentalPointById(UUID id);
+
+    RentalPoint findRowRentalPointOrThrow(UUID id);
 
     Collection<RentalPointResponseDto> findAllRentalPoints(int page, int size, RentalPointSortField sortField);
 

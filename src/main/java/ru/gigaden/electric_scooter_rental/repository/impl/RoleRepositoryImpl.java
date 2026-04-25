@@ -6,7 +6,6 @@ import ru.gigaden.electric_scooter_rental.entity.Role;
 import ru.gigaden.electric_scooter_rental.repository.RoleRepository;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -63,7 +62,7 @@ public class RoleRepositoryImpl extends BaseRepositoryHiber<Role, UUID> implemen
 
     /**
      * Получаем все возможные роли
-     * */
+     */
     @Override
     public Collection<Role> findAll() {
         String jpql = "SELECT r FROM Role r";

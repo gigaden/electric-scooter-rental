@@ -45,8 +45,7 @@ public class RoleController {
 
     /**
      * Получаем все роли. В пагинации смысла особого не вижу для ролей
-     *
-     * */
+     */
     @GetMapping
     @Operation(summary = "Получение ролей", description = "Получаем все возможные роли пользователей")
     public ResponseEntity<Collection<RoleResponseDto>> getAllRoles() {

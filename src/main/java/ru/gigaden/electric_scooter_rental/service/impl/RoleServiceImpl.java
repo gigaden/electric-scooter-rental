@@ -14,7 +14,6 @@ import ru.gigaden.electric_scooter_rental.repository.RoleRepository;
 import ru.gigaden.electric_scooter_rental.service.RoleService;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -46,7 +45,7 @@ public class RoleServiceImpl implements RoleService {
 
     /**
      * Находим все возможные роли пользователей
-     * */
+     */
     @Override
     public Collection<RoleResponseDto> findAllRoles() {
         Collection<RoleResponseDto> response = roleRepository.findAll().stream()

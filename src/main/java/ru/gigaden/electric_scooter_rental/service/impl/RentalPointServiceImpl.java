@@ -10,13 +10,11 @@ import ru.gigaden.electric_scooter_rental.dto.point.RentalPointUpdateDto;
 import ru.gigaden.electric_scooter_rental.entity.RentalPoint;
 import ru.gigaden.electric_scooter_rental.entity.RentalPointSortField;
 import ru.gigaden.electric_scooter_rental.exception.RentalPointNotFoundException;
-import ru.gigaden.electric_scooter_rental.exception.UserNotFoundException;
 import ru.gigaden.electric_scooter_rental.mapper.RentalPointMapper;
 import ru.gigaden.electric_scooter_rental.repository.RentalPointRepository;
 import ru.gigaden.electric_scooter_rental.service.RentalPointService;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -66,8 +64,8 @@ public class RentalPointServiceImpl implements RentalPointService {
     /**
      * Получаем все точки аренды с пагинацией и сортировкой
      *
-     * @param page - номер страницы
-     * @param size - размер
+     * @param page      - номер страницы
+     * @param size      - размер
      * @param sortField - поле, по которому сортируем
      */
     @Override
@@ -84,8 +82,8 @@ public class RentalPointServiceImpl implements RentalPointService {
     /**
      * Метод обновляет точку аренды по её id
      *
-     * @param id - id точки аренды
-     * @param dto    - данные для обновления
+     * @param id  - id точки аренды
+     * @param dto - данные для обновления
      * @throws RentalPointNotFoundException - если точка аренды не найдена
      */
     @Override
@@ -136,7 +134,8 @@ public class RentalPointServiceImpl implements RentalPointService {
     /**
      * Метод получает по незамапенный объект точки аренды
      */
-    private RentalPoint findRowRentalPointOrThrow(UUID id) {
+    @Override
+    public RentalPoint findRowRentalPointOrThrow(UUID id) {
         return rentalPointRepository.findRentalPointById(id)
                 .orElseThrow(() -> {
                     log.error("Точка аренды с id = {} не найдена", id);
