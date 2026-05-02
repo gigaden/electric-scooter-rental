@@ -45,7 +45,7 @@ public class Rental {
 
     @ManyToOne
     @JoinColumn(name = "scooter_id", nullable = false)
-    private Scooter scooter;
+        private Scooter scooter;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)

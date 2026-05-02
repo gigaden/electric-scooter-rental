@@ -70,6 +70,20 @@ public abstract class BaseRepositoryHiber<T, PK extends Serializable> {
         }
     }
 
+    protected List<T> findAll(int page, int size) {
+        try {
+            String jpql = "SELECT e FROM " + type.getSimpleName() + " e";
+            TypedQuery<T> query = entityManager.createQuery(jpql, type)
+                    .setFirstResult(page * size)
+                    .setMaxResults(size);
+
+            return query.getResultList();
+        } catch (HibernateException e) {
+            log.error("Ошибка получения списка {} с пагинацией", type.getSimpleName(), e);
+            throw new DatabaseException("Ошибка получения списка " + type.getSimpleName() + " " + e);
+        }
+    }
+
     protected T find(PK id) {
         try {
             return entityManager.find(type, id);

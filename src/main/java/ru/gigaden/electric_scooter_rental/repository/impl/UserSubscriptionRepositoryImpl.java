@@ -1,0 +1,21 @@
+package ru.gigaden.electric_scooter_rental.repository.impl;
+
+import org.springframework.stereotype.Repository;
+import ru.gigaden.electric_scooter_rental.entity.UserSubscription;
+import ru.gigaden.electric_scooter_rental.repository.UserSubscriptionRepository;
+
+import java.util.Optional;
+import java.util.UUID;
+
+@Repository
+public class UserSubscriptionRepositoryImpl extends BaseRepositoryHiber<UserSubscription, UUID> implements UserSubscriptionRepository {
+
+    public UserSubscriptionRepositoryImpl() {
+        super(UserSubscription.class);
+    }
+
+    @Override
+    public Optional<UserSubscription> findUserSubscriptionById(UUID subscriptionId) {
+        return Optional.empty();
+    }
+}

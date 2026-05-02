@@ -29,7 +29,11 @@ public class ErrorHandler {
             UserNotUniqueException.class,
             RoleNotFoundException.class,
             RentalPointNotFoundException.class,
-            ScooterNotFoundException.class
+            ScooterNotFoundException.class,
+            RentalNotFoundException.class,
+            TariffNotFoundException.class,
+            UserSubscriptionNotFoundException.class,
+            ScooterIsNotAvailableException.class
     })
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFoundException(final BaseException e, WebRequest request) {
