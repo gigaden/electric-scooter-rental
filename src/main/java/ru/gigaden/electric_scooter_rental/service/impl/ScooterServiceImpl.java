@@ -118,6 +118,14 @@ public class ScooterServiceImpl implements ScooterService {
     }
 
     /**
+     * Проверяем существование самоката
+     * */
+    @Override
+    public boolean checkScooterIsExist(UUID scooterId) {
+        return scooterRepository.findScooterById(scooterId).isPresent();
+    }
+
+    /**
      * Обновляем сущность самоката данными из дто
      */
     private void updateScooterFields(Scooter existingScooter, ScooterUpdateDto dto) {

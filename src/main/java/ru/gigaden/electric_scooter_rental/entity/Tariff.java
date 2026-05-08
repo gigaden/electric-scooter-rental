@@ -47,9 +47,9 @@ public class Tariff {
     @Column(name = "is_active")
     private Boolean isActive;
 
-    @OneToOne(mappedBy = "tariff", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "tariff", cascade = CascadeType.ALL)
     private HourlyTariff hourlyTariff;
 
-    @OneToOne(mappedBy = "tariff", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "tariff", cascade = CascadeType.ALL)
     private SubscriptionTariff subscriptionTariff;
 }

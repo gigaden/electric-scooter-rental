@@ -22,4 +22,6 @@ public interface ScooterService {
     ScooterResponseDto updateScooterById(UUID scooterId, ScooterUpdateDto dto);
 
     void deleteScooterById(UUID id);
+
+    boolean checkScooterIsExist(UUID scooterId);
 }

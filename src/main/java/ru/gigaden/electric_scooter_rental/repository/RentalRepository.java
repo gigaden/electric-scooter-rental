@@ -15,7 +15,7 @@ public interface RentalRepository {
 
     Rental createRental(Rental rental);
 
-    Rental updateRentalStatus(Rental rental);
+    Rental updateRental(Rental rental);
 
     Optional<Rental> findRentalById(UUID rentalId);
 

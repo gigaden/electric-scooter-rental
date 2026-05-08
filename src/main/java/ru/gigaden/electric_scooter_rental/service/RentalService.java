@@ -18,5 +18,5 @@ public interface RentalService {
 
     Collection<RentalResponseDto> findAllRentals(int page, int size);
 
-    RentalResponseDto updateRentalStatus(UUID rentalId, RentalUpdateStatusDto dto);
+    RentalResponseDto completeRental(UUID rentalId);
 }

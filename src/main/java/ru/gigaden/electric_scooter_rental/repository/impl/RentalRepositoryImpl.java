@@ -1,11 +1,7 @@
 package ru.gigaden.electric_scooter_rental.repository.impl;
 
-import jakarta.persistence.TypedQuery;
-import org.hibernate.HibernateException;
 import org.springframework.stereotype.Repository;
 import ru.gigaden.electric_scooter_rental.entity.Rental;
-import ru.gigaden.electric_scooter_rental.entity.RentalStatus;
-import ru.gigaden.electric_scooter_rental.exception.DatabaseException;
 import ru.gigaden.electric_scooter_rental.repository.RentalRepository;
 
 import java.util.Collection;
@@ -19,7 +15,6 @@ import java.util.UUID;
 public class RentalRepositoryImpl extends BaseRepositoryHiber<Rental, UUID> implements RentalRepository {
 
     protected RentalRepositoryImpl() {
-
         super(Rental.class);
     }
 
@@ -30,8 +25,7 @@ public class RentalRepositoryImpl extends BaseRepositoryHiber<Rental, UUID> impl
     }
 
     @Override
-    public Rental updateRentalStatus(Rental rental) {
-
+    public Rental updateRental(Rental rental) {
         return update(rental);
     }
 

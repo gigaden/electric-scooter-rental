@@ -17,7 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Класс отлавливает исключения и возвращает ответ в нужном формате
+ * Класс отлавливает исключения и возвращает ответ в нужном формате.
  */
 @RestControllerAdvice
 public class ErrorHandler {
@@ -32,8 +32,7 @@ public class ErrorHandler {
             ScooterNotFoundException.class,
             RentalNotFoundException.class,
             TariffNotFoundException.class,
-            UserSubscriptionNotFoundException.class,
-            ScooterIsNotAvailableException.class
+            UserSubscriptionNotFoundException.class
     })
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFoundException(final BaseException e, WebRequest request) {
@@ -64,6 +63,18 @@ public class ErrorHandler {
         log.error("Ошибка  400 {}: {} в запросе {}",
                 e.getClass(), e.getMessage(), request.getDescription(false));
         return buildErrorResponse(e, HttpStatus.BAD_REQUEST, "Неверный формат запроса");
+    }
+
+    @ExceptionHandler({
+            ScooterIsNotAvailableException.class,
+            RentalCompleteException.class,
+            SubscriptionException.class
+    })
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Map<String, String> handleConflictException(final BaseException e, WebRequest request) {
+        log.error("Ошибка  409 {}: {} в запросе {}",
+                e.getClass(), e.getMessage(), request.getDescription(false));
+        return buildErrorResponse(e, HttpStatus.BAD_REQUEST, e.getReason());
     }
 
 //    @ExceptionHandler({

@@ -2,6 +2,7 @@ package ru.gigaden.electric_scooter_rental.dto.rental;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import java.util.UUID;
 
@@ -20,6 +21,7 @@ public record RentalCreateDto(
         UUID scooterId,
 
         @NotNull(message = "Начальный пробег должен быть указан")
+        @PositiveOrZero(message = "Начальный пробег должен быть >= 0")
         @Schema(description = "Пробег на момент начала аренды", example = "1250")
         Integer startMileage,
 

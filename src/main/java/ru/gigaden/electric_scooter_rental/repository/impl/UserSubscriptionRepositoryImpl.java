@@ -15,7 +15,7 @@ public class UserSubscriptionRepositoryImpl extends BaseRepositoryHiber<UserSubs
     }
 
     @Override
-    public Optional<UserSubscription> findUserSubscriptionById(UUID subscriptionId) {
+    public Optional<UserSubscription> findSubscriptionById(UUID subscriptionId) {
         return Optional.empty();
     }
 }

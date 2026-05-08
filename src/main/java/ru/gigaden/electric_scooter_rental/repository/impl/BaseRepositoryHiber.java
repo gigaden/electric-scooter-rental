@@ -72,7 +72,7 @@ public abstract class BaseRepositoryHiber<T, PK extends Serializable> {
 
     protected List<T> findAll(int page, int size) {
         try {
-            String jpql = "SELECT e FROM " + type.getSimpleName() + " e";
+            String jpql = "SELECT e FROM " + type.getSimpleName() + " e ORDER BY e.id DESC";
             TypedQuery<T> query = entityManager.createQuery(jpql, type)
                     .setFirstResult(page * size)
                     .setMaxResults(size);

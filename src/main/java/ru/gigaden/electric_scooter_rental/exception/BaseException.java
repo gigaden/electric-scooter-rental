@@ -1,5 +1,8 @@
 package ru.gigaden.electric_scooter_rental.exception;
 
+import lombok.Getter;
+
+@Getter
 public abstract class BaseException extends RuntimeException {
 
     private String reason;
@@ -8,7 +11,4 @@ public abstract class BaseException extends RuntimeException {
         super(message);
     }
 
-    public String getReason() {
-        return reason;
-    }
 }

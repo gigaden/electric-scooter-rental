@@ -5,7 +5,16 @@ import ru.gigaden.electric_scooter_rental.entity.Tariff;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Интерфейс репозитория тарифов.
+ * */
 public interface TariffRepository {
 
     Optional<Tariff> findTariffById(UUID tariffId);
+
+    Optional<Tariff> findTariffByName(String tariffName);
+
+    Tariff addTariff(Tariff tariff);
+
+    void deleteTariffById(UUID tariffId);
 }
