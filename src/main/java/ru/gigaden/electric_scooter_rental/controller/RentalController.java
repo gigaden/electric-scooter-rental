@@ -79,4 +79,28 @@ public class RentalController {
         return rentalService.completeRental(rentalId);
     }
 
+    /**
+     * Получаем историю аренды пользователя.
+     * */
+    @GetMapping("/user/{userId}")
+    @Operation(summary = "История аренды пользователя", description = "Получение истории аренд конкретного пользователя")
+    public Collection<RentalResponseDto> getRentalHistoryByUser(@PathVariable UUID userId,
+                                                                @RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue = "10") int size) {
+        log.info("Получаем историю аренды пользователя {} page={}, size={}", userId, page, size);
+        return rentalService.findRentalsByUserId(userId, page, size);
+    }
+
+    /**
+     * Получаем историю аренды самоката.
+     * */
+    @GetMapping("/scooter/{scooterId}")
+    @Operation(summary = "История аренды самоката", description = "Получение завершённых аренд конкретного самоката (для админа)")
+    public Collection<RentalResponseDto> getRentalHistoryByScooter(@PathVariable UUID scooterId,
+                                                                   @RequestParam(defaultValue = "0") int page,
+                                                                   @RequestParam(defaultValue = "10") int size) {
+        log.info("Получаем историю аренды самоката {} page={}, size={}", scooterId, page, size);
+        return rentalService.findFinishedRentalsByScooterId(scooterId, page, size);
+    }
+
 }

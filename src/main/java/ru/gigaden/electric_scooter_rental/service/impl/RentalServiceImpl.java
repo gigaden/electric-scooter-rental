@@ -145,6 +145,24 @@ public class RentalServiceImpl implements RentalService {
         return response;
     }
 
+    @Override
+    public Collection<RentalResponseDto> findRentalsByUserId(UUID userId, int page, int size) {
+        Collection<RentalResponseDto> response = rentalRepository.findRentalsByUserId(userId, page, size).stream()
+            .map(rentalMapper::mapRentalToResponseDto)
+            .toList();
+        log.info("Получили историю аренды пользователя {} в количестве {}", userId, response.size());
+        return response;
+    }
+
+    @Override
+    public Collection<RentalResponseDto> findFinishedRentalsByScooterId(UUID scooterId, int page, int size) {
+        Collection<RentalResponseDto> response = rentalRepository.findFinishedRentalsByScooterId(scooterId, page, size).stream()
+            .map(rentalMapper::mapRentalToResponseDto)
+            .toList();
+        log.info("Получили завершённые аренды самоката {} в количестве {}", scooterId, response.size());
+        return response;
+    }
+
     /**
      * Вычисляет стоимость аренды.
      */

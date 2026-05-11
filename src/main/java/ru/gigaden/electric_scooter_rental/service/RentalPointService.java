@@ -25,4 +25,6 @@ public interface RentalPointService {
     RentalPointResponseDto updateRentalPoint(UUID id, RentalPointUpdateDto dto);
 
     void deleteRentalPointById(UUID id);
+
+    Collection<RentalPointResponseDto> findRentalPointsByRadius(double latitude, double longitude, double radiusKm, int page, int size);
 }

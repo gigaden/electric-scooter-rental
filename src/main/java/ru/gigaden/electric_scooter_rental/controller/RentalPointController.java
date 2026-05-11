@@ -99,4 +99,19 @@ public class RentalPointController {
         return ResponseEntity.ok("Точка аренды удалена");
     }
 
+    /**
+     * Ищет точки аренды по радиусу.
+     * */
+    @GetMapping("/search")
+    @Operation(summary = "Поиск точек аренды по радиусу", description = "Поиск точек аренды в радиусе от заданных координат")
+    public ResponseEntity<Collection<RentalPointResponseDto>> findRentalPointsByRadius(@RequestParam double latitude,
+                                                                                       @RequestParam double longitude,
+                                                                                       @RequestParam(defaultValue = "5.0") double radiusKm,
+                                                                                       @RequestParam(defaultValue = "0") int page,
+                                                                                       @RequestParam(defaultValue = "10") int size) {
+        log.info("Поиск точек аренды в радиусе {} км от ({}, {})", radiusKm, latitude, longitude);
+        Collection<RentalPointResponseDto> response = pointService.findRentalPointsByRadius(latitude, longitude, radiusKm, page, size);
+        return ResponseEntity.ok(response);
+    }
+
 }

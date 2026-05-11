@@ -20,4 +20,10 @@ public interface RentalRepository {
     Optional<Rental> findRentalById(UUID rentalId);
 
     Collection<Rental> findAllRentals(int page, int size);
+
+    Collection<Rental> findRentalsByUserId(UUID userId, int page, int size);
+
+    Collection<Rental> findRentalsByScooterId(UUID scooterId, int page, int size);
+
+    Collection<Rental> findFinishedRentalsByScooterId(UUID scooterId, int page, int size);
 }

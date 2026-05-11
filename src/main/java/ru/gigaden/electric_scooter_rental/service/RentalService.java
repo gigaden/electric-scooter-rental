@@ -18,5 +18,9 @@ public interface RentalService {
 
     Collection<RentalResponseDto> findAllRentals(int page, int size);
 
+    Collection<RentalResponseDto> findRentalsByUserId(UUID userId, int page, int size);
+
+    Collection<RentalResponseDto> findFinishedRentalsByScooterId(UUID scooterId, int page, int size);
+
     RentalResponseDto completeRental(UUID rentalId);
 }

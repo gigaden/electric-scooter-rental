@@ -20,9 +20,6 @@ import java.util.UUID;
 @Slf4j
 public class TariffRepositoryImpl extends BaseRepositoryHiber<Tariff, UUID> implements TariffRepository {
 
-    @PersistenceContext
-    protected EntityManager entityManager;
-
     public TariffRepositoryImpl() {
         super(Tariff.class);
     }

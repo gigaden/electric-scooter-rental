@@ -98,6 +98,16 @@ public class RentalPointServiceImpl implements RentalPointService {
         return response;
     }
 
+    @Override
+    public Collection<RentalPointResponseDto> findRentalPointsByRadius(double latitude, double longitude, double radiusKm, int page, int size) {
+        Collection<RentalPointResponseDto> points = rentalPointRepository
+            .findRentalPointsByRadius(latitude, longitude, radiusKm, page, size).stream()
+            .map(pointMapper::mapRentalPointToResponse)
+            .toList();
+        log.info("Найдено {} точек аренды в радиусе {} км", points.size(), radiusKm);
+        return points;
+    }
+
     /**
      * Обновляем сущность точки аренды данными из дто
      */

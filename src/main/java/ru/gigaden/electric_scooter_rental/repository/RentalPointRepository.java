@@ -19,4 +19,6 @@ public interface RentalPointRepository {
     RentalPoint updateRentalPoint(RentalPoint rentalPoint);
 
     void deleteRentalPoint(RentalPoint rentalPoint);
+
+    Collection<RentalPoint> findRentalPointsByRadius(double latitude, double longitude, double radiusKm, int page, int size);
 }
