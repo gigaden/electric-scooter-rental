@@ -1,6 +1,7 @@
 package ru.gigaden.electric_scooter_rental.repository.impl;
 
 import jakarta.persistence.TypedQuery;
+import org.hibernate.HibernateException;
 import org.springframework.stereotype.Repository;
 import ru.gigaden.electric_scooter_rental.entity.User;
 import ru.gigaden.electric_scooter_rental.repository.UserRepository;
@@ -30,7 +31,22 @@ public class UserRepositoryImpl extends BaseRepositoryHiber<User, UUID> implemen
     }
 
     @Override
+    public Optional<User> findUserByUsername(String username) {
+
+        String jpql = "SELECT u FROM User u WHERE u.username = :username";
+        TypedQuery<User> query = entityManager.createQuery(jpql, User.class);
+        query.setParameter("username", username);
+
+        try {
+            return Optional.ofNullable(query.getSingleResult());
+        } catch (HibernateException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public Collection<User> findAllUsers(int page, int size, String sortBy) {
+
         return findAll(page, size, sortBy);
     }
 

@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -64,7 +65,8 @@ public class UserController {
      * Получаем всех пользователей
      */
     @GetMapping
-    @Operation(summary = "Получение пользователей", description = "Получение пользователя с пагинацией и сортировкой")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Получение пользователей", description = "(Админ) Получение пользователей с пагинацией и сортировкой")
     public ResponseEntity<Collection<UserResponseDto>> findAllUsers(@RequestParam(defaultValue = "0") int page,
                                                                     @RequestParam(defaultValue = "10") int size,
                                                                     @RequestParam(defaultValue = "USERNAME") String sort) {
@@ -79,6 +81,7 @@ public class UserController {
      * Обновляем пользователя
      */
     @PutMapping("/{userId}")
+    @PreAuthorize("@securityUtil.isOwner(#userId) or hasRole('ADMIN')")
     @Operation(summary = "Обновление пользователя", description = "Обновление пользователя по его id")
     public ResponseEntity<UserResponseDto> updateUserById(@PathVariable(name = "userId") UUID userId,
                                                           @Valid @RequestBody UserUpdateDto dto) {
@@ -92,6 +95,7 @@ public class UserController {
      * Удаляем пользователя
      */
     @DeleteMapping("/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Удаление пользователя", description = "Удаление пользователя по его id")
     public ResponseEntity<String> deleteUserById(@PathVariable(name = "userId") UUID userId) {
         log.info("Удаляем пользователя с id {}", userId);

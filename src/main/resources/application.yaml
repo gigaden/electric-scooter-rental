@@ -8,3 +8,5 @@ spring:
     url: jdbc:postgresql://localhost:6541/scooters
     username: postgres
     password: postgres
+jwt:
+  expiration: 86400000

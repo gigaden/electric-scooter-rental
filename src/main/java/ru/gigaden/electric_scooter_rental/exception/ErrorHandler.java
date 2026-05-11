@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
+import org.springframework.security.access.AccessDeniedException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -86,11 +87,11 @@ public class ErrorHandler {
 //        return buildErrorResponse(e, HttpStatus.UNAUTHORIZED, "Ошибка аутентификации");
 //    }
 
-//    @ExceptionHandler(AccessDeniedException.class)
-//    @ResponseStatus(HttpStatus.FORBIDDEN)
-//    public Map<String, String> handleAccess(Exception e, WebRequest request) {
-//        return buildErrorResponse(e, HttpStatus.FORBIDDEN, "Недостаточно прав");
-//    }
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public Map<String, String> handleAccess(Exception e, WebRequest request) {
+        return buildErrorResponse(e, HttpStatus.FORBIDDEN, "Недостаточно прав");
+    }
 
     public Map<String, String> buildErrorResponse(Exception e, HttpStatus status, String reason) {
         Map<String, String> response = new LinkedHashMap<>();

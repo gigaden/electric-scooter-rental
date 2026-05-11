@@ -15,9 +15,11 @@ import ru.gigaden.electric_scooter_rental.exception.UserNotFoundException;
 import ru.gigaden.electric_scooter_rental.exception.UserNotUniqueException;
 import ru.gigaden.electric_scooter_rental.mapper.UserMapper;
 import ru.gigaden.electric_scooter_rental.repository.UserRepository;
+import ru.gigaden.electric_scooter_rental.security.SecurityUtil;
 import ru.gigaden.electric_scooter_rental.service.RoleService;
 import ru.gigaden.electric_scooter_rental.service.UserService;
 
+import org.springframework.security.access.AccessDeniedException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -35,6 +37,7 @@ public class UserServiceImpl implements UserService {
     private final RoleService roleService;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final SecurityUtil securityUtil;
 
 
     /**
@@ -100,6 +103,9 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserResponseDto updateUserById(UUID userId, UserUpdateDto dto) {
+
+        securityUtil.checkOwnerOrAdmin(userId);
+
         User existingUser = findRowUserOrThrow(userId);
         updateUserFields(existingUser, dto);
         User updatedUser = userRepository.updateUser(existingUser);
@@ -114,10 +120,16 @@ public class UserServiceImpl implements UserService {
      *
      * @param id - id пользователя
      * @throws UserNotFoundException - если пользователь не найден
+     * @throws AccessDeniedException - если пользователь не админ
      */
     @Transactional
     @Override
     public void deleteUserById(UUID id) {
+
+        if (!securityUtil.isAdmin()) {
+            throw new AccessDeniedException("Удалить пользователя может только админ");
+        }
+
         User user = findRowUserOrThrow(id);
         userRepository.deleteUserByEntity(user);
         log.info("Пользователь с id {} удалён", id);
