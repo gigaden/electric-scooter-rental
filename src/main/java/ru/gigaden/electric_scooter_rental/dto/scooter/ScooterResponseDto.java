@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * Дто самоката для ответа клиенту
+ * Дто самоката для ответа клиенту.
  */
 @Schema(description = "Дто самоката для ответа клиенту")
 public record ScooterResponseDto(UUID id,

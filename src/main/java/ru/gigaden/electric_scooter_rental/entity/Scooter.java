@@ -37,43 +37,43 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Scooter {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "point_id", nullable = false)
-    private RentalPoint rentalPoint;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "point_id", nullable = false)
+  private RentalPoint rentalPoint;
 
-    @Column(name = "latitude", nullable = false)
-    private Double latitude;
+  @Column(name = "latitude", nullable = false)
+  private Double latitude;
 
-    @Column(name = "longitude", nullable = false)
-    private Double longitude;
+  @Column(name = "longitude", nullable = false)
+  private Double longitude;
 
-    @Column(name = "model", nullable = false)
-    private String model;
+  @Column(name = "model", nullable = false)
+  private String model;
 
-    @Column(name = "description")
-    private String description;
+  @Column(name = "description")
+  private String description;
 
-    @Column(name = "status", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private ScooterStatus status;
+  @Column(name = "status", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private ScooterStatus status;
 
-    @Column(name = "battery_power", nullable = false)
-    private Integer batteryPower;
+  @Column(name = "battery_power", nullable = false)
+  private Integer batteryPower;
 
-    @Column(name = "mileage", nullable = false)
-    private Integer mileage;
+  @Column(name = "mileage", nullable = false)
+  private Integer mileage;
 
-    @Column(name = "updated_on", nullable = false)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime updatedOn;
+  @Column(name = "updated_on", nullable = false)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+  private LocalDateTime updatedOn;
 
-    @PreUpdate
-    @PrePersist
-    protected void onUpdate() {
-        updatedOn = LocalDateTime.now();
-    }
+  @PreUpdate
+  @PrePersist
+  protected void onUpdate() {
+    updatedOn = LocalDateTime.now();
+  }
 }

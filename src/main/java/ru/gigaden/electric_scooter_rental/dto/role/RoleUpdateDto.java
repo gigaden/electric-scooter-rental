@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
 /**
- * Dto для обновления роли пользователя
+ * Dto для обновления роли пользователя.
  */
 @Builder
 @Schema(description = "Дто для обновления роли пользователя")

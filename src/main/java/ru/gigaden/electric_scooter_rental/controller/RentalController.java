@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,76 +32,90 @@ import java.util.UUID;
 @Tag(name = "Аренды", description = "Контроллер для управления арендами")
 public class RentalController {
 
-    private final RentalService rentalService;
+  private final RentalService rentalService;
 
-    /**
-     * Создаём новую аренду.
-     */
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Добавление аренды", description = "Добавление новой аренды в БД")
-    public RentalResponseDto addRental(@Valid @RequestBody RentalCreateDto dto) {
-        log.info("Создаём новую аренду ");
+  /**
+   * Создаём новую аренду.
+   */
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
+  @PreAuthorize("authenticated()")
+  @Operation(summary = "Добавление аренды", description = "Добавление новой аренды в БД")
+  public RentalResponseDto addRental(@Valid @RequestBody RentalCreateDto dto) {
 
-        return rentalService.createRental(dto);
-    }
+    log.info("Создаём новую аренду ");
 
-    /**
-     * Получаем аренду по её id.
-     */
-    @GetMapping("/{rentalId}")
-    @Operation(summary = "Получение аренды", description = "Получение аренды по её id")
-    public RentalResponseDto getRentalById(@PathVariable UUID rentalId) {
-        log.info("Получаем аренду с id = {}", rentalId);
+    return rentalService.createRental(dto);
+  }
 
-        return rentalService.findRentalById(rentalId);
-    }
+  /**
+   * Получаем аренду по её id.
+   */
+  @GetMapping("/{rentalId}")
+  @PreAuthorize("authenticated()")
+  @Operation(summary = "Получение аренды", description = "Получение аренды по её id")
+  public RentalResponseDto getRentalById(@PathVariable UUID rentalId) {
 
-    /**
-     * Получаем все аренды.
-     */
-    @GetMapping
-    @Operation(summary = "Получение аренд", description = "Получение всех аренд с пагинацией и сортировкой по id")
-    public Collection<RentalResponseDto> findAllRental(@RequestParam(defaultValue = "0") int page,
-                                                       @RequestParam(defaultValue = "10") int size) {
-        log.info("Получаем все аренды page={}, size={}", page, size);
+    log.debug("Получаем аренду с id = {}", rentalId);
 
-        return rentalService.findAllRentals(page, size);
-    }
+    return rentalService.findRentalById(rentalId);
+  }
 
-    /**
-     * Завершает аренду.
-     */
-    @PostMapping("/{rentalId}/complete")
-    @Operation(summary = "Завершение аренды", description = "Завершение аренды по её id")
-    public RentalResponseDto completeRentalById(@PathVariable(name = "rentalId") UUID rentalId) {
-        log.info("Завершаем аренду с id {}", rentalId);
+  /**
+   * Получаем все аренды.
+   */
+  @GetMapping
+  @PreAuthorize("hasRole('ADMIN')")
+  @Operation(summary = "Получение аренд", description = "Получение всех аренд с пагинацией и сортировкой по id")
+  public Collection<RentalResponseDto> findAllRental(@RequestParam(defaultValue = "0") int page,
+                                                     @RequestParam(defaultValue = "10") int size) {
 
-        return rentalService.completeRental(rentalId);
-    }
+    log.debug("Получаем все аренды page={}, size={}", page, size);
 
-    /**
-     * Получаем историю аренды пользователя.
-     * */
-    @GetMapping("/user/{userId}")
-    @Operation(summary = "История аренды пользователя", description = "Получение истории аренд конкретного пользователя")
-    public Collection<RentalResponseDto> getRentalHistoryByUser(@PathVariable UUID userId,
-                                                                @RequestParam(defaultValue = "0") int page,
-                                                                @RequestParam(defaultValue = "10") int size) {
-        log.info("Получаем историю аренды пользователя {} page={}, size={}", userId, page, size);
-        return rentalService.findRentalsByUserId(userId, page, size);
-    }
+    return rentalService.findAllRentals(page, size);
+  }
 
-    /**
-     * Получаем историю аренды самоката.
-     * */
-    @GetMapping("/scooter/{scooterId}")
-    @Operation(summary = "История аренды самоката", description = "Получение завершённых аренд конкретного самоката (для админа)")
-    public Collection<RentalResponseDto> getRentalHistoryByScooter(@PathVariable UUID scooterId,
-                                                                   @RequestParam(defaultValue = "0") int page,
-                                                                   @RequestParam(defaultValue = "10") int size) {
-        log.info("Получаем историю аренды самоката {} page={}, size={}", scooterId, page, size);
-        return rentalService.findFinishedRentalsByScooterId(scooterId, page, size);
-    }
+  /**
+   * Завершает аренду.
+   */
+  @PostMapping("/{rentalId}/complete")
+  @PreAuthorize("authenticated()")
+  @Operation(summary = "Завершение аренды", description = "Завершение аренды по её id")
+  public RentalResponseDto completeRentalById(@PathVariable(name = "rentalId") UUID rentalId) {
+
+    log.info("Завершаем аренду с id {}", rentalId);
+
+    return rentalService.completeRental(rentalId);
+  }
+
+  /**
+   * Получаем историю аренды пользователя.
+   */
+  @GetMapping("/user/{userId}")
+  @PreAuthorize("@securityUtil.isOwner(#userId) or hasRole('ADMIN')")
+  @Operation(summary = "История аренды пользователя", description = "Получение истории аренд конкретного пользователя")
+  public Collection<RentalResponseDto> getRentalHistoryByUser(@PathVariable UUID userId,
+                                                              @RequestParam(defaultValue = "0") int page,
+                                                              @RequestParam(defaultValue = "10") int size) {
+
+    log.debug("Получаем историю аренды пользователя {} page={}, size={}", userId, page, size);
+
+    return rentalService.findRentalsByUserId(userId, page, size);
+  }
+
+  /**
+   * Получаем историю аренды самоката.
+   */
+  @GetMapping("/scooter/{scooterId}")
+  @PreAuthorize("hasRole('ADMIN')")
+  @Operation(summary = "История аренды самоката", description = "Получение завершённых аренд конкретного самоката (для админа)")
+  public Collection<RentalResponseDto> getRentalHistoryByScooter(@PathVariable UUID scooterId,
+                                                                 @RequestParam(defaultValue = "0") int page,
+                                                                 @RequestParam(defaultValue = "10") int size) {
+
+    log.debug("Получаем историю аренды самоката {} page={}, size={}", scooterId, page, size);
+
+    return rentalService.findFinishedRentalsByScooterId(scooterId, page, size);
+  }
 
 }

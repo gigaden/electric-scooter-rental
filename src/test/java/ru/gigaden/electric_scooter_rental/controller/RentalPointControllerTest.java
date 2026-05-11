@@ -41,211 +41,211 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("Тесты контроллера точек аренды")
 class RentalPointControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired
+  private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+  @Autowired
+  private ObjectMapper objectMapper;
 
-    @MockitoBean
-    private RentalPointService rentalPointService;
+  @MockitoBean
+  private RentalPointService rentalPointService;
 
-    @Test
-    @DisplayName("POST /points - успешное создание точки аренды")
-    void addRentalPointShouldReturnOk() throws Exception {
-        RentalPointCreateDto requestDto = RentalPointCreateDto.builder()
-                .address("Н.Новгород, Бурнаковская 103")
-                .latitude(56.3269)
-                .longitude(44.0059)
-                .description("Описание точки аренды")
-                .build();
+  @Test
+  @DisplayName("POST /points - успешное создание точки аренды")
+  void addRentalPointShouldReturnOk() throws Exception {
+    RentalPointCreateDto requestDto = RentalPointCreateDto.builder()
+        .address("Н.Новгород, Бурнаковская 103")
+        .latitude(56.3269)
+        .longitude(44.0059)
+        .description("Описание точки аренды")
+        .build();
 
-        UUID pointId = UUID.randomUUID();
-        RentalPointResponseDto responseDto = new RentalPointResponseDto(
-                pointId,
-                "Н.Новгород, Бурнаковская 103",
-                56.3269,
-                44.0059,
-                "Описание точки аренды",
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                List.of()
-        );
+    UUID pointId = UUID.randomUUID();
+    RentalPointResponseDto responseDto = new RentalPointResponseDto(
+        pointId,
+        "Н.Новгород, Бурнаковская 103",
+        56.3269,
+        44.0059,
+        "Описание точки аренды",
+        LocalDateTime.now(),
+        LocalDateTime.now(),
+        List.of()
+    );
 
-        when(rentalPointService.addRentalPoint(any(RentalPointCreateDto.class))).thenReturn(responseDto);
+    when(rentalPointService.addRentalPoint(any(RentalPointCreateDto.class))).thenReturn(responseDto);
 
-        mockMvc.perform(post("/points")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(pointId.toString()))
-                .andExpect(jsonPath("address").value("Н.Новгород, Бурнаковская 103"))
-                .andExpect(jsonPath("latitude").value(56.3269))
-                .andExpect(jsonPath("longitude").value(44.0059));
+    mockMvc.perform(post("/points")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(requestDto)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("id").value(pointId.toString()))
+        .andExpect(jsonPath("address").value("Н.Новгород, Бурнаковская 103"))
+        .andExpect(jsonPath("latitude").value(56.3269))
+        .andExpect(jsonPath("longitude").value(44.0059));
 
-        verify(rentalPointService, times(1)).addRentalPoint(any(RentalPointCreateDto.class));
-    }
+    verify(rentalPointService, times(1)).addRentalPoint(any(RentalPointCreateDto.class));
+  }
 
-    @Test
-    @DisplayName("POST /points - ошибка 400 при невалидном теле запроса")
-    void addRentalPointInvalidRequestShouldReturnBadRequest() throws Exception {
-        RentalPointCreateDto invalidDto = RentalPointCreateDto.builder()
-                .address("")
-                .latitude(56.3269)
-                .longitude(44.0059)
-                .description("Описание")
-                .build();
+  @Test
+  @DisplayName("POST /points - ошибка 400 при невалидном теле запроса")
+  void addRentalPointInvalidRequestShouldReturnBadRequest() throws Exception {
+    RentalPointCreateDto invalidDto = RentalPointCreateDto.builder()
+        .address("")
+        .latitude(56.3269)
+        .longitude(44.0059)
+        .description("Описание")
+        .build();
 
-        mockMvc.perform(post("/points")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidDto)))
-                .andExpect(status().isBadRequest());
+    mockMvc.perform(post("/points")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(invalidDto)))
+        .andExpect(status().isBadRequest());
 
-        verify(rentalPointService, never()).addRentalPoint(any());
-    }
+    verify(rentalPointService, never()).addRentalPoint(any());
+  }
 
-    @Test
-    @DisplayName("GET /points/{pointId} - успешное получение точки аренды")
-    void getRentalPointShouldReturnOk() throws Exception {
-        UUID pointId = UUID.randomUUID();
-        RentalPointResponseDto responseDto = new RentalPointResponseDto(
-                pointId,
-                "Н.Новгород, Бурнаковская 103",
-                56.3269,
-                44.0059,
-                "Описание точки аренды",
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                List.of()
-        );
+  @Test
+  @DisplayName("GET /points/{pointId} - успешное получение точки аренды")
+  void getRentalPointShouldReturnOk() throws Exception {
+    UUID pointId = UUID.randomUUID();
+    RentalPointResponseDto responseDto = new RentalPointResponseDto(
+        pointId,
+        "Н.Новгород, Бурнаковская 103",
+        56.3269,
+        44.0059,
+        "Описание точки аренды",
+        LocalDateTime.now(),
+        LocalDateTime.now(),
+        List.of()
+    );
 
-        when(rentalPointService.findRentalPointById(pointId)).thenReturn(responseDto);
+    when(rentalPointService.findRentalPointById(pointId)).thenReturn(responseDto);
 
-        mockMvc.perform(get("/points/{pointId}", pointId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(pointId.toString()))
-                .andExpect(jsonPath("address").value("Н.Новгород, Бурнаковская 103"));
+    mockMvc.perform(get("/points/{pointId}", pointId))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("id").value(pointId.toString()))
+        .andExpect(jsonPath("address").value("Н.Новгород, Бурнаковская 103"));
 
-        verify(rentalPointService, times(1)).findRentalPointById(pointId);
-    }
+    verify(rentalPointService, times(1)).findRentalPointById(pointId);
+  }
 
-    @Test
-    @DisplayName("GET /points/{pointId} - точка аренды не найдена (404)")
-    void getRentalPointNotFoundShouldReturnNotFound() throws Exception {
-        UUID pointId = UUID.randomUUID();
-        when(rentalPointService.findRentalPointById(pointId))
-                .thenThrow(new RentalPointNotFoundException("Точка аренды не найдена"));
+  @Test
+  @DisplayName("GET /points/{pointId} - точка аренды не найдена (404)")
+  void getRentalPointNotFoundShouldReturnNotFound() throws Exception {
+    UUID pointId = UUID.randomUUID();
+    when(rentalPointService.findRentalPointById(pointId))
+        .thenThrow(new RentalPointNotFoundException("Точка аренды не найдена"));
 
-        mockMvc.perform(get("/points/{pointId}", pointId))
-                .andExpect(status().isNotFound());
+    mockMvc.perform(get("/points/{pointId}", pointId))
+        .andExpect(status().isNotFound());
 
-        verify(rentalPointService, times(1)).findRentalPointById(pointId);
-    }
+    verify(rentalPointService, times(1)).findRentalPointById(pointId);
+  }
 
-    @Test
-    @DisplayName("GET /points - получение списка точек аренды")
-    void findAllRentalPointsShouldReturnOk() throws Exception {
-        RentalPointResponseDto dto = new RentalPointResponseDto(
-                UUID.randomUUID(),
-                "Н.Новгород, Бурнаковская 103",
-                56.3269,
-                44.0059,
-                "Описание точки аренды",
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                List.of()
-        );
+  @Test
+  @DisplayName("GET /points - получение списка точек аренды")
+  void findAllRentalPointsShouldReturnOk() throws Exception {
+    RentalPointResponseDto dto = new RentalPointResponseDto(
+        UUID.randomUUID(),
+        "Н.Новгород, Бурнаковская 103",
+        56.3269,
+        44.0059,
+        "Описание точки аренды",
+        LocalDateTime.now(),
+        LocalDateTime.now(),
+        List.of()
+    );
 
-        when(rentalPointService.findAllRentalPoints(anyInt(), anyInt(), any()))
-                .thenReturn(List.of(dto));
+    when(rentalPointService.findAllRentalPoints(anyInt(), anyInt(), any()))
+        .thenReturn(List.of(dto));
 
-        mockMvc.perform(get("/points"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].address").value("Н.Новгород, Бурнаковская 103"));
+    mockMvc.perform(get("/points"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].address").value("Н.Новгород, Бурнаковская 103"));
 
-        verify(rentalPointService).findAllRentalPoints(0, 10, RentalPointSortField.TOTAL_SCOOTERS);
-    }
+    verify(rentalPointService).findAllRentalPoints(0, 10, RentalPointSortField.TOTAL_SCOOTERS);
+  }
 
-    @Test
-    @DisplayName("PUT /points/{id} - обновление точки аренды")
-    void updateRentalPointShouldReturnOk() throws Exception {
-        UUID id = UUID.randomUUID();
+  @Test
+  @DisplayName("PUT /points/{id} - обновление точки аренды")
+  void updateRentalPointShouldReturnOk() throws Exception {
+    UUID id = UUID.randomUUID();
 
-        RentalPointUpdateDto request = new RentalPointUpdateDto(
-                "Н.Новгород, новая улица 1",
-                56.3300,
-                44.0100,
-                "Обновлённое описание"
-        );
+    RentalPointUpdateDto request = new RentalPointUpdateDto(
+        "Н.Новгород, новая улица 1",
+        56.3300,
+        44.0100,
+        "Обновлённое описание"
+    );
 
-        RentalPointResponseDto response = new RentalPointResponseDto(
-                id,
-                "Н.Новгород, новая улица 1",
-                56.3300,
-                44.0100,
-                "Обновлённое описание",
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                List.of()
-        );
+    RentalPointResponseDto response = new RentalPointResponseDto(
+        id,
+        "Н.Новгород, новая улица 1",
+        56.3300,
+        44.0100,
+        "Обновлённое описание",
+        LocalDateTime.now(),
+        LocalDateTime.now(),
+        List.of()
+    );
 
-        when(rentalPointService.updateRentalPoint(eq(id), any())).thenReturn(response);
+    when(rentalPointService.updateRentalPoint(eq(id), any())).thenReturn(response);
 
-        mockMvc.perform(put("/points/{id}", id)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(id.toString()))
-                .andExpect(jsonPath("address").value("Н.Новгород, новая улица 1"));
+    mockMvc.perform(put("/points/{id}", id)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("id").value(id.toString()))
+        .andExpect(jsonPath("address").value("Н.Новгород, новая улица 1"));
 
-        verify(rentalPointService).updateRentalPoint(eq(id), any());
-    }
+    verify(rentalPointService).updateRentalPoint(eq(id), any());
+  }
 
-    @Test
-    @DisplayName("PUT /points/{id} - обновление несуществующей точки (404)")
-    void updateRentalPointNotFoundShouldReturnNotFound() throws Exception {
-        UUID id = UUID.randomUUID();
-        RentalPointUpdateDto request = new RentalPointUpdateDto(
-                "Адрес Точки аренды",
-                56.3269,
-                44.0059,
-                "Описание точки аренды"
-        );
+  @Test
+  @DisplayName("PUT /points/{id} - обновление несуществующей точки (404)")
+  void updateRentalPointNotFoundShouldReturnNotFound() throws Exception {
+    UUID id = UUID.randomUUID();
+    RentalPointUpdateDto request = new RentalPointUpdateDto(
+        "Адрес Точки аренды",
+        56.3269,
+        44.0059,
+        "Описание точки аренды"
+    );
 
-        when(rentalPointService.updateRentalPoint(eq(id), any()))
-                .thenThrow(new RentalPointNotFoundException("Точка аренды не найдена"));
+    when(rentalPointService.updateRentalPoint(eq(id), any()))
+        .thenThrow(new RentalPointNotFoundException("Точка аренды не найдена"));
 
-        mockMvc.perform(put("/points/{id}", id)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isNotFound());
+    mockMvc.perform(put("/points/{id}", id)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isNotFound());
 
-        verify(rentalPointService).updateRentalPoint(eq(id), any());
-    }
+    verify(rentalPointService).updateRentalPoint(eq(id), any());
+  }
 
-    @Test
-    @DisplayName("DELETE /points/{id} - удаление точки аренды")
-    void deleteRentalPointShouldReturnOk() throws Exception {
-        UUID id = UUID.randomUUID();
+  @Test
+  @DisplayName("DELETE /points/{id} - удаление точки аренды")
+  void deleteRentalPointShouldReturnOk() throws Exception {
+    UUID id = UUID.randomUUID();
 
-        mockMvc.perform(delete("/points/{id}", id))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").value("Точка аренды удалена"));
+    mockMvc.perform(delete("/points/{id}", id))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").value("Точка аренды удалена"));
 
-        verify(rentalPointService).deleteRentalPointById(id);
-    }
+    verify(rentalPointService).deleteRentalPointById(id);
+  }
 
-    @Test
-    @DisplayName("DELETE /points/{id} - удаление несуществующей точки (404)")
-    void deleteRentalPointNotFoundShouldReturnNotFound() throws Exception {
-        UUID id = UUID.randomUUID();
-        doThrow(new RentalPointNotFoundException("Точка аренды не найдена"))
-                .when(rentalPointService)
-                .deleteRentalPointById(id);
+  @Test
+  @DisplayName("DELETE /points/{id} - удаление несуществующей точки (404)")
+  void deleteRentalPointNotFoundShouldReturnNotFound() throws Exception {
+    UUID id = UUID.randomUUID();
+    doThrow(new RentalPointNotFoundException("Точка аренды не найдена"))
+        .when(rentalPointService)
+        .deleteRentalPointById(id);
 
-        mockMvc.perform(delete("/points/{id}", id))
-                .andExpect(status().isNotFound());
+    mockMvc.perform(delete("/points/{id}", id))
+        .andExpect(status().isNotFound());
 
-        verify(rentalPointService).deleteRentalPointById(id);
-    }
+    verify(rentalPointService).deleteRentalPointById(id);
+  }
 }

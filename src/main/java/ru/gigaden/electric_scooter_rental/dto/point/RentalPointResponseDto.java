@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Дто точки аренды для ответа клиенту
+ * Дто точки аренды для ответа клиенту.
  */
 @Schema(description = "Дто точки аренды для клиента")
 public record RentalPointResponseDto(UUID id,

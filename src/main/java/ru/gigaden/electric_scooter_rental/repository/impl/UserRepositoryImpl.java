@@ -16,80 +16,80 @@ import java.util.UUID;
 @Repository
 public class UserRepositoryImpl extends BaseRepositoryHiber<User, UUID> implements UserRepository {
 
-    protected UserRepositoryImpl() {
-        super(User.class);
+  protected UserRepositoryImpl() {
+    super(User.class);
+  }
+
+  @Override
+  public User saveUser(User user) {
+    return save(user);
+  }
+
+  @Override
+  public Optional<User> findUserById(UUID id) {
+    return Optional.ofNullable(find(id));
+  }
+
+  @Override
+  public Optional<User> findUserByUsername(String username) {
+
+    String jpql = "SELECT u FROM User u WHERE u.username = :username";
+    TypedQuery<User> query = entityManager.createQuery(jpql, User.class);
+    query.setParameter("username", username);
+
+    try {
+      return Optional.ofNullable(query.getSingleResult());
+    } catch (HibernateException e) {
+      return Optional.empty();
     }
+  }
 
-    @Override
-    public User saveUser(User user) {
-        return save(user);
-    }
+  @Override
+  public Collection<User> findAllUsers(int page, int size, String sortBy) {
 
-    @Override
-    public Optional<User> findUserById(UUID id) {
-        return Optional.ofNullable(find(id));
-    }
+    return findAll(page, size, sortBy);
+  }
 
-    @Override
-    public Optional<User> findUserByUsername(String username) {
+  @Override
+  public User updateUser(User user) {
+    return update(user);
+  }
 
-        String jpql = "SELECT u FROM User u WHERE u.username = :username";
-        TypedQuery<User> query = entityManager.createQuery(jpql, User.class);
-        query.setParameter("username", username);
+  @Override
+  public void deleteUserByEntity(User user) {
+    delete(user);
+  }
 
-        try {
-            return Optional.ofNullable(query.getSingleResult());
-        } catch (HibernateException e) {
-            return Optional.empty();
-        }
-    }
+  @Override
+  public boolean checkUserIsExistById(UUID id) {
+    return exists(id);
+  }
 
-    @Override
-    public Collection<User> findAllUsers(int page, int size, String sortBy) {
+  /**
+   * Проверяем уникальность имени пользователя
+   *
+   * @param username - имя пользователя
+   */
+  @Override
+  public boolean checkUsernameIsUnique(String username) {
+    String jpql = "SELECT u FROM User u WHERE u.username = :username";
+    TypedQuery<User> query = entityManager.createQuery(jpql, User.class);
+    query.setParameter("username", username);
 
-        return findAll(page, size, sortBy);
-    }
+    return query.getResultList().isEmpty();
+  }
 
-    @Override
-    public User updateUser(User user) {
-        return update(user);
-    }
+  /**
+   * Проверяем уникальность email
+   *
+   * @param email - email
+   */
+  @Override
+  public boolean checkEmailIsUnique(String email) {
+    String jpql = "SELECT u FROM User u WHERE u.email = :email";
+    TypedQuery<User> query = entityManager.createQuery(jpql, User.class);
+    query.setParameter("email", email);
 
-    @Override
-    public void deleteUserByEntity(User user) {
-        delete(user);
-    }
-
-    @Override
-    public boolean checkUserIsExistById(UUID id) {
-        return exists(id);
-    }
-
-    /**
-     * Проверяем уникальность имени пользователя
-     *
-     * @param username - имя пользователя
-     */
-    @Override
-    public boolean checkUsernameIsUnique(String username) {
-        String jpql = "SELECT u FROM User u WHERE u.username = :username";
-        TypedQuery<User> query = entityManager.createQuery(jpql, User.class);
-        query.setParameter("username", username);
-
-        return query.getResultList().isEmpty();
-    }
-
-    /**
-     * Проверяем уникальность email
-     *
-     * @param email - email
-     */
-    @Override
-    public boolean checkEmailIsUnique(String email) {
-        String jpql = "SELECT u FROM User u WHERE u.email = :email";
-        TypedQuery<User> query = entityManager.createQuery(jpql, User.class);
-        query.setParameter("email", email);
-
-        return query.getResultList().isEmpty();
-    }
+    return query.getResultList().isEmpty();
+  }
 }

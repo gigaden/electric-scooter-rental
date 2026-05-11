@@ -2,9 +2,9 @@ package ru.gigaden.electric_scooter_rental.exception;
 
 public class SubscriptionException extends BaseException {
 
-    private final String reason = "Ошибка при обработке подписки";
+  private static final String reason = "Ошибка при обработке подписки";
 
-    public SubscriptionException(String message) {
-        super(message);
-    }
+  public SubscriptionException(String message) {
+    super(message, reason);
+  }
 }

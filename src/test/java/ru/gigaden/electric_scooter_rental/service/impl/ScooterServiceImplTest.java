@@ -39,275 +39,275 @@ import static org.mockito.Mockito.when;
 @DisplayName("Тесты сервиса самокатов")
 class ScooterServiceImplTest {
 
-    @InjectMocks
-    private ScooterServiceImpl scooterService;
+  @InjectMocks
+  private ScooterServiceImpl scooterService;
 
-    @Mock
-    private ScooterMapper scooterMapper;
+  @Mock
+  private ScooterMapper scooterMapper;
 
-    @Mock
-    private ScooterRepository scooterRepository;
+  @Mock
+  private ScooterRepository scooterRepository;
 
-    @Mock
-    private RentalPointService rentalPointService;
+  @Mock
+  private RentalPointService rentalPointService;
 
-    private static final UUID POINT_ID = UUID.randomUUID();
-    private static final String VALID_MODEL = "Nimbus2000";
-    private static final String VALID_DESCRIPTION_CREATE = "Качественный электросамокат для городской аренды с мощным аккумулятором";
-    private static final String VALID_DESCRIPTION_UPDATE = "Качественный электросамокат для городской аренды с мощным аккумулятором и улучшенной подвеской";
+  private static final UUID POINT_ID = UUID.randomUUID();
+  private static final String VALID_MODEL = "Nimbus2000";
+  private static final String VALID_DESCRIPTION_CREATE = "Качественный электросамокат для городской аренды с мощным аккумулятором";
+  private static final String VALID_DESCRIPTION_UPDATE = "Качественный электросамокат для городской аренды с мощным аккумулятором и улучшенной подвеской";
 
-    @Test
-    @DisplayName("Добавление нового самоката")
-    void addScooterShouldBePositive() {
-        ScooterCreateDto createDto = ScooterCreateDto.builder()
-                .rentalPointId(POINT_ID)
-                .model(VALID_MODEL)
-                .description(VALID_DESCRIPTION_CREATE)
-                .batteryPower(100)
-                .mileage(0)
-                .build();
+  @Test
+  @DisplayName("Добавление нового самоката")
+  void addScooterShouldBePositive() {
+    ScooterCreateDto createDto = ScooterCreateDto.builder()
+        .rentalPointId(POINT_ID)
+        .model(VALID_MODEL)
+        .description(VALID_DESCRIPTION_CREATE)
+        .batteryPower(100)
+        .mileage(0)
+        .build();
 
-        RentalPoint rentalPoint = RentalPoint.builder()
-                .id(POINT_ID)
-                .latitude(56.3269)
-                .longitude(44.0059)
-                .address("Test Address")
-                .description("Test Description")
-                .build();
+    RentalPoint rentalPoint = RentalPoint.builder()
+        .id(POINT_ID)
+        .latitude(56.3269)
+        .longitude(44.0059)
+        .address("Test Address")
+        .description("Test Description")
+        .build();
 
-        Scooter scooterBeforeSave = Scooter.builder()
-                .rentalPoint(rentalPoint)
-                .latitude(56.3269)
-                .longitude(44.0059)
-                .model(VALID_MODEL)
-                .description(VALID_DESCRIPTION_CREATE)
-                .status(ScooterStatus.AVAILABLE)
-                .batteryPower(100)
-                .mileage(0)
-                .build();
+    Scooter scooterBeforeSave = Scooter.builder()
+        .rentalPoint(rentalPoint)
+        .latitude(56.3269)
+        .longitude(44.0059)
+        .model(VALID_MODEL)
+        .description(VALID_DESCRIPTION_CREATE)
+        .status(ScooterStatus.AVAILABLE)
+        .batteryPower(100)
+        .mileage(0)
+        .build();
 
-        UUID savedId = UUID.randomUUID();
-        Scooter savedScooter = Scooter.builder()
-                .id(savedId)
-                .rentalPoint(rentalPoint)
-                .latitude(56.3269)
-                .longitude(44.0059)
-                .model(VALID_MODEL)
-                .description(VALID_DESCRIPTION_CREATE)
-                .status(ScooterStatus.AVAILABLE)
-                .batteryPower(100)
-                .mileage(0)
-                .updatedOn(LocalDateTime.now())
-                .build();
+    UUID savedId = UUID.randomUUID();
+    Scooter savedScooter = Scooter.builder()
+        .id(savedId)
+        .rentalPoint(rentalPoint)
+        .latitude(56.3269)
+        .longitude(44.0059)
+        .model(VALID_MODEL)
+        .description(VALID_DESCRIPTION_CREATE)
+        .status(ScooterStatus.AVAILABLE)
+        .batteryPower(100)
+        .mileage(0)
+        .updatedOn(LocalDateTime.now())
+        .build();
 
-        ScooterResponseDto responseDto = new ScooterResponseDto(
-                savedId, POINT_ID, 56.3269, 44.0059, VALID_MODEL,
-                VALID_DESCRIPTION_CREATE, ScooterStatus.AVAILABLE, 100, 0, savedScooter.getUpdatedOn()
-        );
+    ScooterResponseDto responseDto = new ScooterResponseDto(
+        savedId, POINT_ID, 56.3269, 44.0059, VALID_MODEL,
+        VALID_DESCRIPTION_CREATE, ScooterStatus.AVAILABLE, 100, 0, savedScooter.getUpdatedOn()
+    );
 
-        when(rentalPointService.findRowRentalPointOrThrow(POINT_ID)).thenReturn(rentalPoint);
-        when(scooterRepository.saveScooter(any(Scooter.class))).thenReturn(savedScooter);
-        when(scooterMapper.mapScooterToResponseDto(savedScooter)).thenReturn(responseDto);
+    when(rentalPointService.findRowRentalPointOrThrow(POINT_ID)).thenReturn(rentalPoint);
+    when(scooterRepository.saveScooter(any(Scooter.class))).thenReturn(savedScooter);
+    when(scooterMapper.mapScooterToResponseDto(savedScooter)).thenReturn(responseDto);
 
-        ScooterResponseDto result = scooterService.addScooter(createDto);
+    ScooterResponseDto result = scooterService.addScooter(createDto);
 
-        assertNotNull(result);
-        assertEquals(savedId, result.id());
-        assertEquals(VALID_MODEL, result.model());
-        verify(rentalPointService).findRowRentalPointOrThrow(POINT_ID);
-        verify(scooterRepository).saveScooter(any(Scooter.class));
-    }
+    assertNotNull(result);
+    assertEquals(savedId, result.id());
+    assertEquals(VALID_MODEL, result.model());
+    verify(rentalPointService).findRowRentalPointOrThrow(POINT_ID);
+    verify(scooterRepository).saveScooter(any(Scooter.class));
+  }
 
-    @Test
-    @DisplayName("Добавление самоката с несуществующей точкой аренды")
-    void addScooterShouldThrowWhenRentalPointNotFound() {
-        ScooterCreateDto createDto = ScooterCreateDto.builder()
-                .rentalPointId(POINT_ID)
-                .model(VALID_MODEL)
-                .description(VALID_DESCRIPTION_CREATE)
-                .batteryPower(100)
-                .mileage(0)
-                .build();
+  @Test
+  @DisplayName("Добавление самоката с несуществующей точкой аренды")
+  void addScooterShouldThrowWhenRentalPointNotFound() {
+    ScooterCreateDto createDto = ScooterCreateDto.builder()
+        .rentalPointId(POINT_ID)
+        .model(VALID_MODEL)
+        .description(VALID_DESCRIPTION_CREATE)
+        .batteryPower(100)
+        .mileage(0)
+        .build();
 
-        when(rentalPointService.findRowRentalPointOrThrow(POINT_ID))
-                .thenThrow(new RentalPointNotFoundException("Точка аренды не найдена"));
+    when(rentalPointService.findRowRentalPointOrThrow(POINT_ID))
+        .thenThrow(new RentalPointNotFoundException("Точка аренды не найдена"));
 
-        assertThrows(RentalPointNotFoundException.class, () -> scooterService.addScooter(createDto));
-        verify(scooterRepository, never()).saveScooter(any());
-    }
+    assertThrows(RentalPointNotFoundException.class, () -> scooterService.addScooter(createDto));
+    verify(scooterRepository, never()).saveScooter(any());
+  }
 
-    @Test
-    @DisplayName("Получение самоката по id")
-    void findScooterByIdShouldBePositive() {
-        UUID scooterId = UUID.randomUUID();
-        RentalPoint rentalPoint = RentalPoint.builder().id(POINT_ID).build();
+  @Test
+  @DisplayName("Получение самоката по id")
+  void findScooterByIdShouldBePositive() {
+    UUID scooterId = UUID.randomUUID();
+    RentalPoint rentalPoint = RentalPoint.builder().id(POINT_ID).build();
 
-        Scooter scooter = Scooter.builder()
-                .id(scooterId)
-                .rentalPoint(rentalPoint)
-                .model(VALID_MODEL)
-                .description(VALID_DESCRIPTION_CREATE)
-                .status(ScooterStatus.AVAILABLE)
-                .batteryPower(100)
-                .mileage(0)
-                .build();
+    Scooter scooter = Scooter.builder()
+        .id(scooterId)
+        .rentalPoint(rentalPoint)
+        .model(VALID_MODEL)
+        .description(VALID_DESCRIPTION_CREATE)
+        .status(ScooterStatus.AVAILABLE)
+        .batteryPower(100)
+        .mileage(0)
+        .build();
 
-        ScooterResponseDto responseDto = new ScooterResponseDto(
-                scooterId, POINT_ID, 56.3269, 44.0059, VALID_MODEL,
-                VALID_DESCRIPTION_CREATE, ScooterStatus.AVAILABLE, 100, 0, LocalDateTime.now()
-        );
+    ScooterResponseDto responseDto = new ScooterResponseDto(
+        scooterId, POINT_ID, 56.3269, 44.0059, VALID_MODEL,
+        VALID_DESCRIPTION_CREATE, ScooterStatus.AVAILABLE, 100, 0, LocalDateTime.now()
+    );
 
-        when(scooterRepository.findScooterById(scooterId)).thenReturn(Optional.of(scooter));
-        when(scooterMapper.mapScooterToResponseDto(scooter)).thenReturn(responseDto);
+    when(scooterRepository.findScooterById(scooterId)).thenReturn(Optional.of(scooter));
+    when(scooterMapper.mapScooterToResponseDto(scooter)).thenReturn(responseDto);
 
-        ScooterResponseDto result = scooterService.findScooterById(scooterId);
+    ScooterResponseDto result = scooterService.findScooterById(scooterId);
 
-        assertNotNull(result);
-        assertEquals(scooterId, result.id());
-        verify(scooterRepository).findScooterById(scooterId);
-    }
+    assertNotNull(result);
+    assertEquals(scooterId, result.id());
+    verify(scooterRepository).findScooterById(scooterId);
+  }
 
-    @Test
-    @DisplayName("Поиск самоката по несуществующему ID")
-    void findScooterByIdShouldThrowWhenNotFound() {
-        UUID scooterId = UUID.randomUUID();
-        when(scooterRepository.findScooterById(scooterId)).thenReturn(Optional.empty());
+  @Test
+  @DisplayName("Поиск самоката по несуществующему ID")
+  void findScooterByIdShouldThrowWhenNotFound() {
+    UUID scooterId = UUID.randomUUID();
+    when(scooterRepository.findScooterById(scooterId)).thenReturn(Optional.empty());
 
-        assertThrows(ScooterNotFoundException.class, () -> scooterService.findScooterById(scooterId));
-        verify(scooterMapper, never()).mapScooterToResponseDto(any());
-    }
+    assertThrows(ScooterNotFoundException.class, () -> scooterService.findScooterById(scooterId));
+    verify(scooterMapper, never()).mapScooterToResponseDto(any());
+  }
 
-    @Test
-    @DisplayName("Получение всех самокатов с пагинацией")
-    void findAllShouldBePositive() {
-        RentalPoint rentalPoint = RentalPoint.builder().id(POINT_ID).build();
-        Scooter scooter = Scooter.builder()
-                .id(UUID.randomUUID())
-                .rentalPoint(rentalPoint)
-                .model(VALID_MODEL)
-                .description(VALID_DESCRIPTION_CREATE)
-                .status(ScooterStatus.AVAILABLE)
-                .batteryPower(100)
-                .mileage(0)
-                .build();
+  @Test
+  @DisplayName("Получение всех самокатов с пагинацией")
+  void findAllShouldBePositive() {
+    RentalPoint rentalPoint = RentalPoint.builder().id(POINT_ID).build();
+    Scooter scooter = Scooter.builder()
+        .id(UUID.randomUUID())
+        .rentalPoint(rentalPoint)
+        .model(VALID_MODEL)
+        .description(VALID_DESCRIPTION_CREATE)
+        .status(ScooterStatus.AVAILABLE)
+        .batteryPower(100)
+        .mileage(0)
+        .build();
 
-        ScooterResponseDto dto = new ScooterResponseDto(
-                scooter.getId(), POINT_ID, 56.3269, 44.0059, VALID_MODEL,
-                VALID_DESCRIPTION_CREATE, ScooterStatus.AVAILABLE, 100, 0, LocalDateTime.now()
-        );
+    ScooterResponseDto dto = new ScooterResponseDto(
+        scooter.getId(), POINT_ID, 56.3269, 44.0059, VALID_MODEL,
+        VALID_DESCRIPTION_CREATE, ScooterStatus.AVAILABLE, 100, 0, LocalDateTime.now()
+    );
 
-        when(scooterRepository.findAllScooters(anyInt(), anyInt(), anyString()))
-                .thenReturn(List.of(scooter));
-        when(scooterMapper.mapScooterToResponseDto(scooter)).thenReturn(dto);
+    when(scooterRepository.findAllScooters(anyInt(), anyInt(), anyString()))
+        .thenReturn(List.of(scooter));
+    when(scooterMapper.mapScooterToResponseDto(scooter)).thenReturn(dto);
 
-        Collection<ScooterResponseDto> result = scooterService.findAll(0, 10, ScooterSortField.BATTERY);
+    Collection<ScooterResponseDto> result = scooterService.findAll(0, 10, ScooterSortField.BATTERY);
 
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(scooterRepository).findAllScooters(0, 10, "batteryPower");
-    }
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    verify(scooterRepository).findAllScooters(0, 10, "batteryPower");
+  }
 
-    @Test
-    @DisplayName("Обновление самоката")
-    void updateScooterByIdShouldBePositive() {
-        UUID scooterId = UUID.randomUUID();
-        RentalPoint rentalPoint = RentalPoint.builder().id(POINT_ID).latitude(56.33).longitude(44.01).build();
+  @Test
+  @DisplayName("Обновление самоката")
+  void updateScooterByIdShouldBePositive() {
+    UUID scooterId = UUID.randomUUID();
+    RentalPoint rentalPoint = RentalPoint.builder().id(POINT_ID).latitude(56.33).longitude(44.01).build();
 
-        Scooter existingScooter = Scooter.builder()
-                .id(scooterId)
-                .rentalPoint(rentalPoint)
-                .model("OldModel")
-                .description("Old description for testing purposes only")
-                .status(ScooterStatus.AVAILABLE)
-                .batteryPower(50)
-                .mileage(100)
-                .build();
+    Scooter existingScooter = Scooter.builder()
+        .id(scooterId)
+        .rentalPoint(rentalPoint)
+        .model("OldModel")
+        .description("Old description for testing purposes only")
+        .status(ScooterStatus.AVAILABLE)
+        .batteryPower(50)
+        .mileage(100)
+        .build();
 
-        ScooterUpdateDto updateDto = new ScooterUpdateDto(
-                POINT_ID, 56.33, 44.01, "NewModel", VALID_DESCRIPTION_UPDATE,
-                ScooterStatus.MAINTENANCE, 80, 150
-        );
+    ScooterUpdateDto updateDto = new ScooterUpdateDto(
+        POINT_ID, 56.33, 44.01, "NewModel", VALID_DESCRIPTION_UPDATE,
+        ScooterStatus.MAINTENANCE, 80, 150
+    );
 
-        Scooter updatedScooter = Scooter.builder()
-                .id(scooterId)
-                .rentalPoint(rentalPoint)
-                .model("NewModel")
-                .description(VALID_DESCRIPTION_UPDATE)
-                .status(ScooterStatus.MAINTENANCE)
-                .batteryPower(80)
-                .mileage(150)
-                .build();
+    Scooter updatedScooter = Scooter.builder()
+        .id(scooterId)
+        .rentalPoint(rentalPoint)
+        .model("NewModel")
+        .description(VALID_DESCRIPTION_UPDATE)
+        .status(ScooterStatus.MAINTENANCE)
+        .batteryPower(80)
+        .mileage(150)
+        .build();
 
-        ScooterResponseDto responseDto = new ScooterResponseDto(
-                scooterId, POINT_ID, 56.33, 44.01, "NewModel",
-                VALID_DESCRIPTION_UPDATE, ScooterStatus.MAINTENANCE, 80, 150, LocalDateTime.now()
-        );
+    ScooterResponseDto responseDto = new ScooterResponseDto(
+        scooterId, POINT_ID, 56.33, 44.01, "NewModel",
+        VALID_DESCRIPTION_UPDATE, ScooterStatus.MAINTENANCE, 80, 150, LocalDateTime.now()
+    );
 
-        when(scooterRepository.findScooterById(scooterId)).thenReturn(Optional.of(existingScooter));
-        when(rentalPointService.findRowRentalPointOrThrow(POINT_ID)).thenReturn(rentalPoint);
-        when(scooterRepository.updateScooter(any(Scooter.class))).thenReturn(updatedScooter);
-        when(scooterMapper.mapScooterToResponseDto(updatedScooter)).thenReturn(responseDto);
+    when(scooterRepository.findScooterById(scooterId)).thenReturn(Optional.of(existingScooter));
+    when(rentalPointService.findRowRentalPointOrThrow(POINT_ID)).thenReturn(rentalPoint);
+    when(scooterRepository.updateScooter(any(Scooter.class))).thenReturn(updatedScooter);
+    when(scooterMapper.mapScooterToResponseDto(updatedScooter)).thenReturn(responseDto);
 
-        ScooterResponseDto result = scooterService.updateScooterById(scooterId, updateDto);
+    ScooterResponseDto result = scooterService.updateScooterById(scooterId, updateDto);
 
-        assertNotNull(result);
-        assertEquals("NewModel", result.model());
-        assertEquals(ScooterStatus.MAINTENANCE, result.status());
-        verify(scooterRepository).updateScooter(any(Scooter.class));
-    }
+    assertNotNull(result);
+    assertEquals("NewModel", result.model());
+    assertEquals(ScooterStatus.MAINTENANCE, result.status());
+    verify(scooterRepository).updateScooter(any(Scooter.class));
+  }
 
-    @Test
-    @DisplayName("Обновление самоката с несуществующей точкой аренды")
-    void updateScooterShouldThrowWhenRentalPointNotFound() {
-        UUID scooterId = UUID.randomUUID();
-        Scooter existingScooter = Scooter.builder().id(scooterId).build();
-        ScooterUpdateDto updateDto = new ScooterUpdateDto(
-                POINT_ID, 56.33, 44.01, VALID_MODEL, VALID_DESCRIPTION_UPDATE,
-                ScooterStatus.AVAILABLE, 100, 0
-        );
+  @Test
+  @DisplayName("Обновление самоката с несуществующей точкой аренды")
+  void updateScooterShouldThrowWhenRentalPointNotFound() {
+    UUID scooterId = UUID.randomUUID();
+    Scooter existingScooter = Scooter.builder().id(scooterId).build();
+    ScooterUpdateDto updateDto = new ScooterUpdateDto(
+        POINT_ID, 56.33, 44.01, VALID_MODEL, VALID_DESCRIPTION_UPDATE,
+        ScooterStatus.AVAILABLE, 100, 0
+    );
 
-        when(scooterRepository.findScooterById(scooterId)).thenReturn(Optional.of(existingScooter));
-        when(rentalPointService.findRowRentalPointOrThrow(POINT_ID))
-                .thenThrow(new RentalPointNotFoundException("Точка аренды не найдена"));
+    when(scooterRepository.findScooterById(scooterId)).thenReturn(Optional.of(existingScooter));
+    when(rentalPointService.findRowRentalPointOrThrow(POINT_ID))
+        .thenThrow(new RentalPointNotFoundException("Точка аренды не найдена"));
 
-        assertThrows(RentalPointNotFoundException.class,
-                () -> scooterService.updateScooterById(scooterId, updateDto));
-    }
+    assertThrows(RentalPointNotFoundException.class,
+        () -> scooterService.updateScooterById(scooterId, updateDto));
+  }
 
-    @Test
-    @DisplayName("Обновление несуществующего самоката")
-    void updateScooterShouldThrowWhenScooterNotFound() {
-        UUID scooterId = UUID.randomUUID();
-        ScooterUpdateDto updateDto = new ScooterUpdateDto(
-                POINT_ID, 56.33, 44.01, VALID_MODEL, VALID_DESCRIPTION_UPDATE,
-                ScooterStatus.AVAILABLE, 100, 0
-        );
+  @Test
+  @DisplayName("Обновление несуществующего самоката")
+  void updateScooterShouldThrowWhenScooterNotFound() {
+    UUID scooterId = UUID.randomUUID();
+    ScooterUpdateDto updateDto = new ScooterUpdateDto(
+        POINT_ID, 56.33, 44.01, VALID_MODEL, VALID_DESCRIPTION_UPDATE,
+        ScooterStatus.AVAILABLE, 100, 0
+    );
 
-        when(scooterRepository.findScooterById(scooterId)).thenReturn(Optional.empty());
+    when(scooterRepository.findScooterById(scooterId)).thenReturn(Optional.empty());
 
-        assertThrows(ScooterNotFoundException.class,
-                () -> scooterService.updateScooterById(scooterId, updateDto));
-    }
+    assertThrows(ScooterNotFoundException.class,
+        () -> scooterService.updateScooterById(scooterId, updateDto));
+  }
 
-    @Test
-    @DisplayName("Удаление самоката")
-    void deleteScooterByIdShouldBePositive() {
-        UUID scooterId = UUID.randomUUID();
-        Scooter scooter = Scooter.builder().id(scooterId).build();
+  @Test
+  @DisplayName("Удаление самоката")
+  void deleteScooterByIdShouldBePositive() {
+    UUID scooterId = UUID.randomUUID();
+    Scooter scooter = Scooter.builder().id(scooterId).build();
 
-        when(scooterRepository.findScooterById(scooterId)).thenReturn(Optional.of(scooter));
+    when(scooterRepository.findScooterById(scooterId)).thenReturn(Optional.of(scooter));
 
-        scooterService.deleteScooterById(scooterId);
+    scooterService.deleteScooterById(scooterId);
 
-        verify(scooterRepository).deleteScooterByEntity(scooter);
-    }
+    verify(scooterRepository).deleteScooterByEntity(scooter);
+  }
 
-    @Test
-    @DisplayName("Удаление несуществующего самоката")
-    void deleteScooterByIdShouldThrowWhenNotFound() {
-        UUID scooterId = UUID.randomUUID();
-        when(scooterRepository.findScooterById(scooterId)).thenReturn(Optional.empty());
+  @Test
+  @DisplayName("Удаление несуществующего самоката")
+  void deleteScooterByIdShouldThrowWhenNotFound() {
+    UUID scooterId = UUID.randomUUID();
+    when(scooterRepository.findScooterById(scooterId)).thenReturn(Optional.empty());
 
-        assertThrows(ScooterNotFoundException.class, () -> scooterService.deleteScooterById(scooterId));
-    }
+    assertThrows(ScooterNotFoundException.class, () -> scooterService.deleteScooterById(scooterId));
+  }
 }

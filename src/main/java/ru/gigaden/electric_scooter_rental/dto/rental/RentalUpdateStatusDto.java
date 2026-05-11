@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import ru.gigaden.electric_scooter_rental.entity.RentalStatus;
 
 /**
- * Дто для изменения статуса аренды
+ * Дто для изменения статуса аренды.
  */
 public record RentalUpdateStatusDto(@NotNull(message = "Статус аренды должен быть указан")
                                     @Schema(description = "Статус аренды", example = "IN_PROGRESS")

@@ -5,10 +5,13 @@ import ru.gigaden.electric_scooter_rental.dto.role.RoleCreateDto;
 import ru.gigaden.electric_scooter_rental.dto.role.RoleResponseDto;
 import ru.gigaden.electric_scooter_rental.entity.Role;
 
+/**
+ * Маппер для ролей.
+ */
 @Mapper(componentModel = "spring")
 public interface RoleMapper {
 
-    Role mapCreateDtoToRole(RoleCreateDto dto);
+  Role mapCreateDtoToRole(RoleCreateDto dto);
 
-    RoleResponseDto mapRoleToResponseDto(Role role);
+  RoleResponseDto mapRoleToResponseDto(Role role);
 }

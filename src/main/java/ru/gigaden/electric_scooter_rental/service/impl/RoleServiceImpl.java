@@ -24,91 +24,91 @@ import java.util.UUID;
 @Slf4j
 public class RoleServiceImpl implements RoleService {
 
-    private final RoleRepository roleRepository;
-    private final RoleMapper roleMapper;
+  private final RoleRepository roleRepository;
+  private final RoleMapper roleMapper;
 
-    /**
-     * Создание новой роли
-     *
-     * @param dto - dto роли
-     * @return - dto с новой ролью
-     */
-    @Transactional
-    @Override
-    public RoleResponseDto createRole(RoleCreateDto dto) {
-        Role role = roleRepository.saveRole(roleMapper.mapCreateDtoToRole(dto));
-        RoleResponseDto response = roleMapper.mapRoleToResponseDto(role);
-        log.info("Добавлена новая роль {}", response);
+  /**
+   * Создание новой роли
+   *
+   * @param dto - dto роли
+   * @return - dto с новой ролью
+   */
+  @Transactional
+  @Override
+  public RoleResponseDto createRole(RoleCreateDto dto) {
 
-        return response;
+    Role role = roleRepository.saveRole(roleMapper.mapCreateDtoToRole(dto));
+    RoleResponseDto response = roleMapper.mapRoleToResponseDto(role);
+    log.info("Добавлена новая роль {}", response);
+
+    return response;
+  }
+
+  /**
+   * Находим все возможные роли пользователей
+   */
+  @Override
+  public Collection<RoleResponseDto> findAllRoles() {
+
+    Collection<RoleResponseDto> response = roleRepository.findAll().stream()
+        .map(roleMapper::mapRoleToResponseDto)
+        .toList();
+    log.debug("Получили список ролей пользователей в количестве {}", response.size());
+
+    return response;
+  }
+
+  /**
+   * Ищет роль по имени
+   *
+   * @param name - имя роли
+   * @return - объект роли
+   * @throws RoleNotFoundException - если роль не найдена
+   */
+  @Override
+  public Role findRowRoleByNameOrThrow(String name) {
+
+    Role role = roleRepository.findRoleByName(name)
+        .orElseThrow(() -> new RoleNotFoundException("Роль не найдена"));
+    log.debug("Найдена роль {}", name);
+
+    return role;
+  }
+
+  @Override
+  public Role findRowRoleByIdOrThrow(UUID id) {
+
+    Role role = roleRepository.findRoleById(id)
+        .orElseThrow(() -> new RoleNotFoundException("Роль не найдена"));
+    log.debug("Получена роль с id = {}", id);
+
+    return role;
+  }
+
+  @Transactional
+  @Override
+  public RoleResponseDto updateRole(UUID roleId, RoleUpdateDto dto) {
+
+    Role oldRole = findRowRoleByIdOrThrow(roleId);
+
+    if (dto.name() != null) {
+      oldRole.setName(dto.name());
     }
 
-    /**
-     * Находим все возможные роли пользователей
-     */
-    @Override
-    public Collection<RoleResponseDto> findAllRoles() {
-        Collection<RoleResponseDto> response = roleRepository.findAll().stream()
-                .map(roleMapper::mapRoleToResponseDto)
-                .toList();
-        log.info("Получили список ролей пользователей в количестве {}", response.size());
+    Role updatedRole = roleRepository.updateRole(oldRole);
+    RoleResponseDto response = roleMapper.mapRoleToResponseDto(updatedRole);
+    log.info("Роль с id = {} обновлена", roleId);
 
-        return response;
-    }
+    return response;
+  }
 
-    /**
-     * Ищет роль по имени
-     *
-     * @param name - имя роли
-     * @return - объект роли
-     * @throws RoleNotFoundException - если роль не найдена
-     */
-    @Override
-    public Role findRowRoleByNameOrThrow(String name) {
-        Role role = roleRepository.findRoleByName(name)
-                .orElseThrow(() -> {
-                    log.error("Роль {} не найдена", name);
-                    return new RoleNotFoundException("Роль не найдена");
-                });
-        log.info("Найдена роль {}", name);
+  @Transactional
+  @Override
+  public void deleteRoleById(UUID roleId) {
 
-        return role;
-    }
+    Role role = findRowRoleByIdOrThrow(roleId);
+    roleRepository.deleteRole(role);
 
-    @Override
-    public Role findRowRoleByIdOrThrow(UUID id) {
-        Role role = roleRepository.findRoleById(id)
-                .orElseThrow(() -> {
-                    log.error("Роль id = {} не найдена", id);
-                    return new RoleNotFoundException("Роль не найдена");
-                });
-        log.info("Получена роль с id = {}", id);
-
-        return role;
-    }
-
-    @Transactional
-    @Override
-    public RoleResponseDto updateRole(UUID roleId, RoleUpdateDto dto) {
-        Role oldRole = findRowRoleByIdOrThrow(roleId);
-
-        if (dto.name() != null) {
-            oldRole.setName(dto.name());
-        }
-
-        Role updatedRole = roleRepository.updateRole(oldRole);
-        RoleResponseDto response = roleMapper.mapRoleToResponseDto(updatedRole);
-        log.info("Роль с id = {} обновлена", roleId);
-
-        return response;
-    }
-
-    @Transactional
-    @Override
-    public void deleteRoleById(UUID roleId) {
-        Role role = findRowRoleByIdOrThrow(roleId);
-        roleRepository.deleteRole(role);
-
-        log.info("Роль с id = {} удалена", roleId);
-    }
+    log.info("Роль с id = {} удалена", roleId);
+  }
 }

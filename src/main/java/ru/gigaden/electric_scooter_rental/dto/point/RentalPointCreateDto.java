@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
 /**
- * Dto для создания точки аренды
+ * Dto для создания точки аренды.
  */
 @Builder
 @Schema(description = "Дто для создания точки аренды")

@@ -12,17 +12,17 @@ import java.util.UUID;
 
 /**
  * Реализация сервиса часовых тарифов
- * */
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class HourlyTariffServiceImpl implements HourlyTariffService {
 
-    private final HourlyTariffRepository hourlyTariffRepository;
+  private final HourlyTariffRepository hourlyTariffRepository;
 
-    @Override
-    public HourlyTariff findHourlyTariffByTariffId(UUID tariffId) {
-        return hourlyTariffRepository.findHourlyTariffByTariffId(tariffId)
-            .orElseThrow(() -> new TariffNotFoundException("Почасовой тариф не найден"));
-    }
+  @Override
+  public HourlyTariff findHourlyTariffByTariffId(UUID tariffId) {
+    return hourlyTariffRepository.findHourlyTariffByTariffId(tariffId)
+        .orElseThrow(() -> new TariffNotFoundException("Почасовой тариф не найден"));
+  }
 }

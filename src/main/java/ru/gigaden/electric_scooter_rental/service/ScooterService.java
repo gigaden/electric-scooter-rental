@@ -13,15 +13,15 @@ import java.util.UUID;
  */
 public interface ScooterService {
 
-    ScooterResponseDto addScooter(ScooterCreateDto dto);
+  ScooterResponseDto addScooter(ScooterCreateDto dto);
 
-    ScooterResponseDto findScooterById(UUID id);
+  ScooterResponseDto findScooterById(UUID id);
 
-    Collection<ScooterResponseDto> findAll(int page, int size, ScooterSortField sort);
+  Collection<ScooterResponseDto> findAll(int page, int size, ScooterSortField sort);
 
-    ScooterResponseDto updateScooterById(UUID scooterId, ScooterUpdateDto dto);
+  ScooterResponseDto updateScooterById(UUID scooterId, ScooterUpdateDto dto);
 
-    void deleteScooterById(UUID id);
+  void deleteScooterById(UUID id);
 
-    boolean checkScooterIsExist(UUID scooterId);
+  boolean checkScooterIsExist(UUID scooterId);
 }

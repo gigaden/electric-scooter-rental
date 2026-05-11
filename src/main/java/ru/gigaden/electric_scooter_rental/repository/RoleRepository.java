@@ -11,15 +11,15 @@ import java.util.UUID;
  */
 public interface RoleRepository {
 
-    Role saveRole(Role role);
+  Role saveRole(Role role);
 
-    Role updateRole(Role role);
+  Role updateRole(Role role);
 
-    Collection<Role> findAll();
+  Collection<Role> findAll();
 
-    Optional<Role> findRoleByName(String name);
+  Optional<Role> findRoleByName(String name);
 
-    Optional<Role> findRoleById(UUID id);
+  Optional<Role> findRoleById(UUID id);
 
-    void deleteRole(Role role);
+  void deleteRole(Role role);
 }

@@ -1,4 +1,8 @@
 spring:
+
+  config:
+    import: optional:classpath:secrets.yml
+
   application:
     name: electric-scooter-rental
   liquibase:
@@ -8,5 +12,38 @@ spring:
     url: jdbc:postgresql://localhost:6541/scooters
     username: postgres
     password: postgres
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: event:ru.gigaden.electric_scooter_rental.dto.UserRegisteredEvent
+    consumer:
+      group-id: notification-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: ru.gigaden.electric_scooter_rental.dto
+        spring.json.type.mapping: event:ru.gigaden.electric_scooter_rental.dto.UserRegisteredEvent
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${gmail.login}
+    password: ${gmail.token}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+kafka:
+  topics:
+    user-registered: user-registered-events
+
 jwt:
   expiration: 86400000

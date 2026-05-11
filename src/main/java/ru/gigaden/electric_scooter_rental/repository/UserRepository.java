@@ -11,21 +11,21 @@ import java.util.UUID;
  */
 public interface UserRepository {
 
-    User saveUser(User user);
+  User saveUser(User user);
 
-    Optional<User> findUserById(UUID id);
+  Optional<User> findUserById(UUID id);
 
-    Optional<User> findUserByUsername(String username);
+  Optional<User> findUserByUsername(String username);
 
-    Collection<User> findAllUsers(int page, int size, String sortBy);
+  Collection<User> findAllUsers(int page, int size, String sortBy);
 
-    User updateUser(User user);
+  User updateUser(User user);
 
-    void deleteUserByEntity(User user);
+  void deleteUserByEntity(User user);
 
-    boolean checkUserIsExistById(UUID id);
+  boolean checkUserIsExistById(UUID id);
 
-    boolean checkUsernameIsUnique(String username);
+  boolean checkUsernameIsUnique(String username);
 
-    boolean checkEmailIsUnique(String email);
+  boolean checkEmailIsUnique(String email);
 }

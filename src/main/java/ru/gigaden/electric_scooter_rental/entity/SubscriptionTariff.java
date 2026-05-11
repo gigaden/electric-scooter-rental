@@ -29,18 +29,18 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class SubscriptionTariff {
 
-    @Id
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "tariff_id")
-    private Tariff tariff;
+  @Id
+  @OneToOne
+  @MapsId
+  @JoinColumn(name = "tariff_id")
+  private Tariff tariff;
 
-    @Column(name = "price", nullable = false)
-    private BigDecimal price;
+  @Column(name = "price", nullable = false)
+  private BigDecimal price;
 
-    @Column(name = "duration_days", nullable = false)
-    private Integer durationDays;
+  @Column(name = "duration_days", nullable = false)
+  private Integer durationDays;
 
-    @Column(name = "discount_percent")
-    private Short discountPercent;
+  @Column(name = "discount_percent")
+  private Short discountPercent;
 }

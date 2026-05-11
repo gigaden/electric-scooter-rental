@@ -11,15 +11,15 @@ import java.util.UUID;
  */
 public interface ScooterRepository {
 
-    Scooter saveScooter(Scooter scooter);
+  Scooter saveScooter(Scooter scooter);
 
-    Optional<Scooter> findScooterById(UUID id);
+  Optional<Scooter> findScooterById(UUID id);
 
-    Collection<Scooter> findAllScooters(int page, int size, String sortBy);
+  Collection<Scooter> findAllScooters(int page, int size, String sortBy);
 
-    Scooter updateScooter(Scooter scooter);
+  Scooter updateScooter(Scooter scooter);
 
-    void deleteScooterByEntity(Scooter scooter);
+  void deleteScooterByEntity(Scooter scooter);
 
-    boolean checkScooterIsExistById(UUID id);
+  boolean checkScooterIsExistById(UUID id);
 }

@@ -11,25 +11,28 @@ import ru.gigaden.electric_scooter_rental.security.CustomUserDetails;
 import ru.gigaden.electric_scooter_rental.security.JwtTokenProvider;
 import ru.gigaden.electric_scooter_rental.service.AuthService;
 
+/**
+ * Сервис для аутентификации.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AuthServiceImpl implements AuthService {
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenProvider tokenProvider;
+  private final AuthenticationManager authenticationManager;
+  private final JwtTokenProvider tokenProvider;
 
-    @Override
-    public AuthResponse authenticate(String username, String password) {
+  @Override
+  public AuthResponse authenticate(String username, String password) {
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password)
-        );
+    Authentication authentication = authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(username, password)
+    );
 
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        String token = tokenProvider.generateToken(authentication);
+    CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+    String token = tokenProvider.generateToken(authentication);
 
-        log.info("Пользователь {} успешно аутентифицирован", username);
-        return new AuthResponse(token, userDetails.getId());
-    }
+    log.info("Пользователь {} успешно аутентифицирован", username);
+    return new AuthResponse(token, userDetails.getId());
+  }
 }

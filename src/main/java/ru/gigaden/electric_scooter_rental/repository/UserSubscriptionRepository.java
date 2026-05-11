@@ -5,9 +5,12 @@ import ru.gigaden.electric_scooter_rental.entity.UserSubscription;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Репозиторий для работы с подписками.
+ */
 public interface UserSubscriptionRepository {
 
-    Optional<UserSubscription> findSubscriptionById(UUID subscriptionId);
+  Optional<UserSubscription> findSubscriptionById(UUID subscriptionId);
 
-    UserSubscription saveSubscription(UserSubscription subscription);
+  UserSubscription saveSubscription(UserSubscription subscription);
 }

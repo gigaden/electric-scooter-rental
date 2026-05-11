@@ -25,131 +25,137 @@ import java.util.UUID;
 @Slf4j
 public class RentalPointServiceImpl implements RentalPointService {
 
-    private final RentalPointRepository rentalPointRepository;
-    private final RentalPointMapper pointMapper;
+  private final RentalPointRepository rentalPointRepository;
+  private final RentalPointMapper pointMapper;
 
-    /**
-     * Создаём новую точку аренды
-     *
-     * @param dto - dto новой точки аренды
-     * @return - дто с созданной новой точкой аренды
-     */
-    @Transactional
-    @Override
-    public RentalPointResponseDto addRentalPoint(RentalPointCreateDto dto) {
-        RentalPoint rentalPoint = pointMapper.mapCreateToRentalPoint(dto);
-        RentalPoint savedRentalPoint = rentalPointRepository.saveRentalPoint(rentalPoint);
-        RentalPointResponseDto response = pointMapper.mapRentalPointToResponse(savedRentalPoint);
-        log.info("Создали новую точку аренды id = {}", response.id());
+  /**
+   * Создаём новую точку аренды
+   *
+   * @param dto - dto новой точки аренды
+   * @return - дто с созданной новой точкой аренды
+   */
+  @Transactional
+  @Override
+  public RentalPointResponseDto addRentalPoint(RentalPointCreateDto dto) {
 
-        return response;
+    RentalPoint rentalPoint = pointMapper.mapCreateToRentalPoint(dto);
+    RentalPoint savedRentalPoint = rentalPointRepository.saveRentalPoint(rentalPoint);
+    RentalPointResponseDto response = pointMapper.mapRentalPointToResponse(savedRentalPoint);
+    log.info("Создали новую точку аренды id = {}", response.id());
+
+    return response;
+  }
+
+  /**
+   * Метод возвращает точку аренды по её id
+   *
+   * @param id - id точки аренды
+   * @return - дто с точкой аренды
+   * @throws RentalPointNotFoundException если точка аренды не найдена
+   */
+  @Override
+  public RentalPointResponseDto findRentalPointById(UUID id) {
+
+    RentalPoint rentalPoint = findRowRentalPointOrThrow(id);
+    RentalPointResponseDto response = pointMapper.mapRentalPointToResponse(rentalPoint);
+    log.debug("Получили точку аренды с id = {}", id);
+
+    return response;
+  }
+
+  /**
+   * Получаем все точки аренды с пагинацией и сортировкой
+   *
+   * @param page      - номер страницы
+   * @param size      - размер
+   * @param sortField - поле, по которому сортируем
+   */
+  @Override
+  public Collection<RentalPointResponseDto> findAllRentalPoints(int page, int size, RentalPointSortField sortField) {
+
+    Collection<RentalPointResponseDto> points = rentalPointRepository
+        .findAllRentalPoints(page, size, sortField.name()).stream()
+        .map(pointMapper::mapRentalPointToResponse)
+        .toList();
+    log.debug("Получили список точек аренды page = {}, size = {}, sort = {}", page, size, sortField);
+
+    return points;
+  }
+
+  /**
+   * Метод обновляет точку аренды по её id
+   *
+   * @param id  - id точки аренды
+   * @param dto - данные для обновления
+   * @throws RentalPointNotFoundException - если точка аренды не найдена
+   */
+  @Override
+  @Transactional
+  public RentalPointResponseDto updateRentalPoint(UUID id, RentalPointUpdateDto dto) {
+
+    RentalPoint rentalPoint = findRowRentalPointOrThrow(id);
+    updateRentalPointFields(rentalPoint, dto);
+    RentalPoint updated = rentalPointRepository.updateRentalPoint(rentalPoint);
+    RentalPointResponseDto response = pointMapper.mapRentalPointToResponse(updated);
+    log.info("Точка аренды с id = {} обновлена", id);
+
+    return response;
+  }
+
+  @Override
+  public Collection<RentalPointResponseDto> findRentalPointsByRadius(double latitude, double longitude, double radiusKm, int page, int size) {
+
+    Collection<RentalPointResponseDto> points = rentalPointRepository
+        .findRentalPointsByRadius(latitude, longitude, radiusKm, page, size).stream()
+        .map(pointMapper::mapRentalPointToResponse)
+        .toList();
+    log.debug("Найдено {} точек аренды в радиусе {} км", points.size(), radiusKm);
+
+    return points;
+  }
+
+  /**
+   * Обновляем сущность точки аренды данными из дто
+   */
+  private void updateRentalPointFields(RentalPoint rentalPoint, RentalPointUpdateDto dto) {
+
+    if (dto.address() != null) {
+      rentalPoint.setAddress(dto.address());
     }
-
-    /**
-     * Метод возвращает точку аренды по её id
-     *
-     * @param id - id точки аренды
-     * @return - дто с точкой аренды
-     * @throws RentalPointNotFoundException если точка аренды не найдена
-     */
-    @Override
-    public RentalPointResponseDto findRentalPointById(UUID id) {
-        RentalPoint rentalPoint = findRowRentalPointOrThrow(id);
-        RentalPointResponseDto response = pointMapper.mapRentalPointToResponse(rentalPoint);
-        log.info("Получили точку аренды с id = {}", id);
-
-        return response;
+    if (dto.latitude() != null) {
+      rentalPoint.setLatitude(dto.latitude());
     }
-
-    /**
-     * Получаем все точки аренды с пагинацией и сортировкой
-     *
-     * @param page      - номер страницы
-     * @param size      - размер
-     * @param sortField - поле, по которому сортируем
-     */
-    @Override
-    public Collection<RentalPointResponseDto> findAllRentalPoints(int page, int size, RentalPointSortField sortField) {
-        Collection<RentalPointResponseDto> points = rentalPointRepository
-                .findAllRentalPoints(page, size, sortField.name()).stream()
-                .map(pointMapper::mapRentalPointToResponse)
-                .toList();
-        log.info("Получили список точек аренды page = {}, size = {}, sort = {}", page, size, sortField);
-
-        return points;
+    if (dto.longitude() != null) {
+      rentalPoint.setLongitude(dto.longitude());
     }
-
-    /**
-     * Метод обновляет точку аренды по её id
-     *
-     * @param id  - id точки аренды
-     * @param dto - данные для обновления
-     * @throws RentalPointNotFoundException - если точка аренды не найдена
-     */
-    @Override
-    @Transactional
-    public RentalPointResponseDto updateRentalPoint(UUID id, RentalPointUpdateDto dto) {
-        RentalPoint rentalPoint = findRowRentalPointOrThrow(id);
-        updateRentalPointFields(rentalPoint, dto);
-        RentalPoint updated = rentalPointRepository.updateRentalPoint(rentalPoint);
-        RentalPointResponseDto response = pointMapper.mapRentalPointToResponse(updated);
-        log.info("Точка аренды с id = {} обновлена", id);
-
-        return response;
+    if (dto.description() != null) {
+      rentalPoint.setDescription(dto.description());
     }
+  }
 
-    @Override
-    public Collection<RentalPointResponseDto> findRentalPointsByRadius(double latitude, double longitude, double radiusKm, int page, int size) {
-        Collection<RentalPointResponseDto> points = rentalPointRepository
-            .findRentalPointsByRadius(latitude, longitude, radiusKm, page, size).stream()
-            .map(pointMapper::mapRentalPointToResponse)
-            .toList();
-        log.info("Найдено {} точек аренды в радиусе {} км", points.size(), radiusKm);
-        return points;
-    }
+  /**
+   * Метод удаляет точку аренды id
+   *
+   * @param id - id точки аренды
+   * @throws RentalPointNotFoundException - если точка аренды не найдена
+   */
+  @Transactional
+  @Override
+  public void deleteRentalPointById(UUID id) {
 
-    /**
-     * Обновляем сущность точки аренды данными из дто
-     */
-    private void updateRentalPointFields(RentalPoint rentalPoint, RentalPointUpdateDto dto) {
-        if (dto.address() != null) {
-            rentalPoint.setAddress(dto.address());
-        }
-        if (dto.latitude() != null) {
-            rentalPoint.setLatitude(dto.latitude());
-        }
-        if (dto.longitude() != null) {
-            rentalPoint.setLongitude(dto.longitude());
-        }
-        if (dto.description() != null) {
-            rentalPoint.setDescription(dto.description());
-        }
-    }
+    RentalPoint rentalPoint = findRowRentalPointOrThrow(id);
+    rentalPointRepository.deleteRentalPoint(rentalPoint);
 
-    /**
-     * Метод удаляет точку аренды id
-     *
-     * @param id - id точки аренды
-     * @throws RentalPointNotFoundException - если точка аренды не найдена
-     */
-    @Transactional
-    @Override
-    public void deleteRentalPointById(UUID id) {
-        RentalPoint rentalPoint = findRowRentalPointOrThrow(id);
-        rentalPointRepository.deleteRentalPoint(rentalPoint);
+    log.info("Точка аренды с id = {} удалена", id);
+  }
 
-        log.info("Точка аренды с id = {} удалена", id);
-    }
+  /**
+   * Метод получает по незамапенный объект точки аренды
+   */
+  @Override
+  public RentalPoint findRowRentalPointOrThrow(UUID id) {
 
-    /**
-     * Метод получает по незамапенный объект точки аренды
-     */
-    @Override
-    public RentalPoint findRowRentalPointOrThrow(UUID id) {
-        return rentalPointRepository.findRentalPointById(id)
-                .orElseThrow(() -> {
-                    log.error("Точка аренды с id = {} не найдена", id);
-                    return new RentalPointNotFoundException("Точка аренды не найдена");
-                });
-    }
+    return rentalPointRepository.findRentalPointById(id)
+        .orElseThrow(() -> new RentalPointNotFoundException("Точка аренды не найдена"));
+  }
 }

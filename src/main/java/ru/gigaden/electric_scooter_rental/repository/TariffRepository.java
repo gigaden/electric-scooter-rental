@@ -7,14 +7,14 @@ import java.util.UUID;
 
 /**
  * Интерфейс репозитория тарифов.
- * */
+ */
 public interface TariffRepository {
 
-    Optional<Tariff> findTariffById(UUID tariffId);
+  Optional<Tariff> findTariffById(UUID tariffId);
 
-    Optional<Tariff> findTariffByName(String tariffName);
+  Optional<Tariff> findTariffByName(String tariffName);
 
-    Tariff addTariff(Tariff tariff);
+  Tariff addTariff(Tariff tariff);
 
-    void deleteTariffById(UUID tariffId);
+  void deleteTariffById(UUID tariffId);
 }

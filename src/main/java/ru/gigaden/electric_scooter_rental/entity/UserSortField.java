@@ -7,21 +7,21 @@ import lombok.Getter;
  */
 @Getter
 public enum UserSortField {
-    USERNAME("username"),
-    REGISTERED("registeredOn");
+  USERNAME("username"),
+  REGISTERED("registeredOn");
 
-    private final String field;
+  private final String field;
 
-    UserSortField(String field) {
-        this.field = field;
+  UserSortField(String field) {
+    this.field = field;
+  }
+
+  public static UserSortField fromString(String value) {
+    for (UserSortField sortField : UserSortField.values()) {
+      if (sortField.name().equalsIgnoreCase(value) || sortField.field.equalsIgnoreCase(value)) {
+        return sortField;
+      }
     }
-
-    public static UserSortField fromString(String value) {
-        for (UserSortField sortField : UserSortField.values()) {
-            if (sortField.name().equalsIgnoreCase(value) || sortField.field.equalsIgnoreCase(value)) {
-                return sortField;
-            }
-        }
-        throw new IllegalArgumentException("Неизвестное поле сортировки: " + value);
-    }
+    throw new IllegalArgumentException("Неизвестное поле сортировки: " + value);
+  }
 }

@@ -40,174 +40,174 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("Тесты контроллера пользователей")
 class UserControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired
+  private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+  @Autowired
+  private ObjectMapper objectMapper;
 
-    @MockitoBean
-    private UserService userService;
+  @MockitoBean
+  private UserService userService;
 
-    @Test
-    @DisplayName("POST /users - успешное создание пользователя")
-    void addUserShouldReturnOk() throws Exception {
-        UserCreateDto requestDto = UserCreateDto.builder()
-                .username("username")
-                .password("password")
-                .email("mail@mail.ru")
-                .build();
+  @Test
+  @DisplayName("POST /users - успешное создание пользователя")
+  void addUserShouldReturnOk() throws Exception {
+    UserCreateDto requestDto = UserCreateDto.builder()
+        .username("username")
+        .password("password")
+        .email("mail@mail.ru")
+        .build();
 
-        UUID userId = UUID.randomUUID();
-        UserResponseDto responseDto = new UserResponseDto(
-                userId,
-                "username",
-                "mail@mail.ru",
-                null, null, Set.of()
-        );
+    UUID userId = UUID.randomUUID();
+    UserResponseDto responseDto = new UserResponseDto(
+        userId,
+        "username",
+        "mail@mail.ru",
+        null, null, Set.of()
+    );
 
-        when(userService.addUser(any(UserCreateDto.class))).thenReturn(responseDto);
+    when(userService.addUser(any(UserCreateDto.class))).thenReturn(responseDto);
 
-        mockMvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(userId.toString()))
-                .andExpect(jsonPath("username").value("username"))
-                .andExpect(jsonPath("email").value("mail@mail.ru"));
+    mockMvc.perform(post("/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(requestDto)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("id").value(userId.toString()))
+        .andExpect(jsonPath("username").value("username"))
+        .andExpect(jsonPath("email").value("mail@mail.ru"));
 
-        verify(userService, times(1)).addUser(any(UserCreateDto.class));
-    }
+    verify(userService, times(1)).addUser(any(UserCreateDto.class));
+  }
 
-    @Test
-    @DisplayName("POST /users - ошибка 400 при невалидном теле запроса")
-    void addUserInvalidRequestShouldReturnBadRequest() throws Exception {
-        UserCreateDto invalidDto = UserCreateDto.builder()
-                .username("username")
-                .password("password")
-                .email("")
-                .build();
+  @Test
+  @DisplayName("POST /users - ошибка 400 при невалидном теле запроса")
+  void addUserInvalidRequestShouldReturnBadRequest() throws Exception {
+    UserCreateDto invalidDto = UserCreateDto.builder()
+        .username("username")
+        .password("password")
+        .email("")
+        .build();
 
-        mockMvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidDto)))
-                .andExpect(status().isBadRequest());
+    mockMvc.perform(post("/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(invalidDto)))
+        .andExpect(status().isBadRequest());
 
-        verify(userService, never()).addUser(any());
-    }
+    verify(userService, never()).addUser(any());
+  }
 
-    @Test
-    @DisplayName("POST /users - конфликт при неуникальном email/username")
-    void addUserDuplicateFieldShouldReturnConflict() throws Exception {
-        UserCreateDto requestDto = UserCreateDto.builder()
-                .username("username")
-                .password("password")
-                .email("mail@mail.ru")
-                .build();
+  @Test
+  @DisplayName("POST /users - конфликт при неуникальном email/username")
+  void addUserDuplicateFieldShouldReturnConflict() throws Exception {
+    UserCreateDto requestDto = UserCreateDto.builder()
+        .username("username")
+        .password("password")
+        .email("mail@mail.ru")
+        .build();
 
-        when(userService.addUser(any(UserCreateDto.class)))
-                .thenThrow(new UserNotUniqueException("Email не уникален"));
+    when(userService.addUser(any(UserCreateDto.class)))
+        .thenThrow(new UserNotUniqueException("Email не уникален"));
 
-        mockMvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
-                .andExpect(status().isNotFound());
+    mockMvc.perform(post("/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(requestDto)))
+        .andExpect(status().isNotFound());
 
-        verify(userService, times(1)).addUser(any());
-    }
+    verify(userService, times(1)).addUser(any());
+  }
 
-    @Test
-    @DisplayName("GET /users/{userId} - успешное получение пользователя")
-    void getUserShouldReturnOk() throws Exception {
-        UUID userId = UUID.randomUUID();
-        UserResponseDto responseDto = new UserResponseDto(
-                userId,
-                "username",
-                "mail@mail.ru",
-                null, null, Set.of()
-        );
+  @Test
+  @DisplayName("GET /users/{userId} - успешное получение пользователя")
+  void getUserShouldReturnOk() throws Exception {
+    UUID userId = UUID.randomUUID();
+    UserResponseDto responseDto = new UserResponseDto(
+        userId,
+        "username",
+        "mail@mail.ru",
+        null, null, Set.of()
+    );
 
-        when(userService.findUserById(userId)).thenReturn(responseDto);
+    when(userService.findUserById(userId)).thenReturn(responseDto);
 
-        mockMvc.perform(get("/users/{userId}", userId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(userId.toString()))
-                .andExpect(jsonPath("username").value("username"));
+    mockMvc.perform(get("/users/{userId}", userId))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("id").value(userId.toString()))
+        .andExpect(jsonPath("username").value("username"));
 
-        verify(userService, times(1)).findUserById(userId);
-    }
+    verify(userService, times(1)).findUserById(userId);
+  }
 
-    @Test
-    @DisplayName("GET /users/{userId} - пользователь не найден (404)")
-    void getUserNotFoundShouldReturnNotFound() throws Exception {
-        UUID userId = UUID.randomUUID();
-        when(userService.findUserById(userId))
-                .thenThrow(new UserNotFoundException("Пользователь не найден"));
+  @Test
+  @DisplayName("GET /users/{userId} - пользователь не найден (404)")
+  void getUserNotFoundShouldReturnNotFound() throws Exception {
+    UUID userId = UUID.randomUUID();
+    when(userService.findUserById(userId))
+        .thenThrow(new UserNotFoundException("Пользователь не найден"));
 
-        mockMvc.perform(get("/users/{userId}", userId))
-                .andExpect(status().isNotFound());
+    mockMvc.perform(get("/users/{userId}", userId))
+        .andExpect(status().isNotFound());
 
-        verify(userService, times(1)).findUserById(userId);
-    }
+    verify(userService, times(1)).findUserById(userId);
+  }
 
-    @Test
-    @DisplayName("GET /users - получение списка пользователей")
-    void findAllUsersShouldReturnOk() throws Exception {
-        UserResponseDto dto = new UserResponseDto(
-                UUID.randomUUID(),
-                "username",
-                "mail@mail.ru",
-                null, null, Set.of()
-        );
+  @Test
+  @DisplayName("GET /users - получение списка пользователей")
+  void findAllUsersShouldReturnOk() throws Exception {
+    UserResponseDto dto = new UserResponseDto(
+        UUID.randomUUID(),
+        "username",
+        "mail@mail.ru",
+        null, null, Set.of()
+    );
 
-        when(userService.findAll(anyInt(), anyInt(), any()))
-                .thenReturn(List.of(dto));
+    when(userService.findAll(anyInt(), anyInt(), any()))
+        .thenReturn(List.of(dto));
 
-        mockMvc.perform(get("/users"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].username").value("username"));
+    mockMvc.perform(get("/users"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].username").value("username"));
 
-        verify(userService).findAll(0, 10, UserSortField.USERNAME);
-    }
+    verify(userService).findAll(0, 10, UserSortField.USERNAME);
+  }
 
-    @Test
-    @DisplayName("PUT /users/{id} - обновление пользователя")
-    void updateUserShouldReturnOk() throws Exception {
-        UUID id = UUID.randomUUID();
+  @Test
+  @DisplayName("PUT /users/{id} - обновление пользователя")
+  void updateUserShouldReturnOk() throws Exception {
+    UUID id = UUID.randomUUID();
 
-        UserUpdateDto request = new UserUpdateDto(
-                "username",
-                "password",
-                "mail@mail.ru"
-        );
+    UserUpdateDto request = new UserUpdateDto(
+        "username",
+        "password",
+        "mail@mail.ru"
+    );
 
-        UserResponseDto response = new UserResponseDto(
-                id,
-                "username",
-                "mail@mail.ru",
-                null, null, Set.of()
-        );
+    UserResponseDto response = new UserResponseDto(
+        id,
+        "username",
+        "mail@mail.ru",
+        null, null, Set.of()
+    );
 
-        when(userService.updateUserById(any(), any()))
-                .thenReturn(response);
+    when(userService.updateUserById(any(), any()))
+        .thenReturn(response);
 
-        mockMvc.perform(put("/users/{id}", id)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(id.toString()));
+    mockMvc.perform(put("/users/{id}", id)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("id").value(id.toString()));
 
-        verify(userService).updateUserById(any(), any());
-    }
+    verify(userService).updateUserById(any(), any());
+  }
 
-    @Test
-    @DisplayName("DELETE /users/{id} - удаление пользователя")
-    void deleteUserShouldReturnOk() throws Exception {
-        UUID id = UUID.randomUUID();
+  @Test
+  @DisplayName("DELETE /users/{id} - удаление пользователя")
+  void deleteUserShouldReturnOk() throws Exception {
+    UUID id = UUID.randomUUID();
 
-        mockMvc.perform(delete("/users/{id}", id))
-                .andExpect(status().isOk());
+    mockMvc.perform(delete("/users/{id}", id))
+        .andExpect(status().isOk());
 
-        verify(userService).deleteUserById(id);
-    }
+    verify(userService).deleteUserById(id);
+  }
 }

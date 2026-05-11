@@ -29,15 +29,15 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class HourlyTariff {
 
-    @Id
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "tariff_id")
-    private Tariff tariff;
+  @Id
+  @OneToOne
+  @MapsId
+  @JoinColumn(name = "tariff_id")
+  private Tariff tariff;
 
-    @Column(name = "price_per_hour", nullable = false)
-    private BigDecimal pricePerHour;
+  @Column(name = "price_per_hour", nullable = false)
+  private BigDecimal pricePerHour;
 
-    @Column(name = "discount_percent")
-    private Short discountPercent;
+  @Column(name = "discount_percent")
+  private Short discountPercent;
 }

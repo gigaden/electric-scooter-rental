@@ -6,13 +6,23 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import ru.gigaden.electric_scooter_rental.dto.subscription.UserSubscriptionCreateDto;
 import ru.gigaden.electric_scooter_rental.dto.subscription.UserSubscriptionResponseDto;
 import ru.gigaden.electric_scooter_rental.service.UserSubscriptionService;
 
 import java.util.UUID;
 
+/**
+ * Управляет подписками пользователей
+ */
 @RestController
 @RequestMapping("/subscriptions")
 @RequiredArgsConstructor
@@ -20,22 +30,30 @@ import java.util.UUID;
 @Tag(name = "Подписки", description = "Контроллер для управления подписками пользователей")
 public class UserSubscriptionController {
 
-    private final UserSubscriptionService subscriptionService;
+  private final UserSubscriptionService subscriptionService;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Создание подписки", description = "Активация подписки для пользователя")
-    public UserSubscriptionResponseDto createSubscription(@Valid @RequestBody UserSubscriptionCreateDto dto) {
+  /**
+   * Создаёт подписку
+   */
+  @PostMapping
+  @PreAuthorize("@securityUtil.isOwner(#dto.userId) or hasRole('ADMIN')")
+  @ResponseStatus(HttpStatus.CREATED)
+  @Operation(summary = "Создание подписки", description = "Активация подписки для пользователя")
+  public UserSubscriptionResponseDto createSubscription(@Valid @RequestBody UserSubscriptionCreateDto dto) {
 
-        log.info("Создаём подписку для пользователя {}", dto.userId());
-        return subscriptionService.createSubscription(dto);
-    }
+    log.info("Создаём подписку для пользователя {}", dto.userId());
+    return subscriptionService.createSubscription(dto);
+  }
 
-    @GetMapping("/{subscriptionId}")
-    @Operation(summary = "Получение подписки", description = "Получение информации о подписке по её id")
-    public UserSubscriptionResponseDto getSubscription(@PathVariable UUID subscriptionId) {
+  /**
+   * Получает подписку
+   */
+  @GetMapping("/{subscriptionId}")
+  @PreAuthorize("authenticated()")
+  @Operation(summary = "Получение подписки", description = "Получение информации о подписке по её id")
+  public UserSubscriptionResponseDto getSubscription(@PathVariable UUID subscriptionId) {
 
-        log.info("Получаем подписку с id = {}", subscriptionId);
-        return subscriptionService.findSubscriptionById(subscriptionId);
-    }
+    log.debug("Получаем подписку с id = {}", subscriptionId);
+    return subscriptionService.findSubscriptionById(subscriptionId);
+  }
 }

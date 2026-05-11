@@ -1,14 +1,18 @@
 package ru.gigaden.electric_scooter_rental.dto.auth;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.util.UUID;
 
+/**
+ * Дто для ответа после аутентификации
+ */
 @Schema(description = "Ответ с токеном доступа")
 public record AuthResponse(
-        @Schema(description = "JWT токен")
-        String token,
+    @Schema(description = "JWT токен")
+    String token,
 
-        @Schema(description = "ID пользователя")
-        UUID userId
+    @Schema(description = "ID пользователя")
+    UUID userId
 ) {
 }

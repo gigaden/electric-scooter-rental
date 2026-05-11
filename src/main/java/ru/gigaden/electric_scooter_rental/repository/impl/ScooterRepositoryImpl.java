@@ -14,37 +14,37 @@ import java.util.UUID;
 @Repository
 public class ScooterRepositoryImpl extends BaseRepositoryHiber<Scooter, UUID> implements ScooterRepository {
 
-    protected ScooterRepositoryImpl() {
-        super(Scooter.class);
-    }
+  protected ScooterRepositoryImpl() {
+    super(Scooter.class);
+  }
 
-    @Override
-    public Scooter saveScooter(Scooter scooter) {
-        return save(scooter);
-    }
+  @Override
+  public Scooter saveScooter(Scooter scooter) {
+    return save(scooter);
+  }
 
-    @Override
-    public Optional<Scooter> findScooterById(UUID id) {
-        return Optional.ofNullable(find(id));
-    }
+  @Override
+  public Optional<Scooter> findScooterById(UUID id) {
+    return Optional.ofNullable(find(id));
+  }
 
-    @Override
-    public Collection<Scooter> findAllScooters(int page, int size, String sortBy) {
-        return findAll(page, size, sortBy);
-    }
+  @Override
+  public Collection<Scooter> findAllScooters(int page, int size, String sortBy) {
+    return findAll(page, size, sortBy);
+  }
 
-    @Override
-    public Scooter updateScooter(Scooter scooter) {
-        return update(scooter);
-    }
+  @Override
+  public Scooter updateScooter(Scooter scooter) {
+    return update(scooter);
+  }
 
-    @Override
-    public void deleteScooterByEntity(Scooter scooter) {
-        delete(scooter);
-    }
+  @Override
+  public void deleteScooterByEntity(Scooter scooter) {
+    delete(scooter);
+  }
 
-    @Override
-    public boolean checkScooterIsExistById(UUID id) {
-        return exists(id);
-    }
+  @Override
+  public boolean checkScooterIsExistById(UUID id) {
+    return exists(id);
+  }
 }

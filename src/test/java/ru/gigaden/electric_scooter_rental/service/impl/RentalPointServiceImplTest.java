@@ -35,232 +35,232 @@ import static org.mockito.Mockito.when;
 @DisplayName("Тесты сервиса точек аренды")
 class RentalPointServiceImplTest {
 
-    @InjectMocks
-    private RentalPointServiceImpl rentalPointService;
+  @InjectMocks
+  private RentalPointServiceImpl rentalPointService;
 
-    @Mock
-    private RentalPointMapper pointMapper;
+  @Mock
+  private RentalPointMapper pointMapper;
 
-    @Mock
-    private RentalPointRepository rentalPointRepository;
+  @Mock
+  private RentalPointRepository rentalPointRepository;
 
-    @Test
-    @DisplayName("Добавление новой точки аренды")
-    void addRentalPointShouldBePositive() {
-        RentalPointCreateDto createDto = RentalPointCreateDto.builder()
-                .address("Н.Новгород, Бурнаковская 103")
-                .latitude(56.3269)
-                .longitude(44.0059)
-                .description("Описание точки аренды")
-                .build();
+  @Test
+  @DisplayName("Добавление новой точки аренды")
+  void addRentalPointShouldBePositive() {
+    RentalPointCreateDto createDto = RentalPointCreateDto.builder()
+        .address("Н.Новгород, Бурнаковская 103")
+        .latitude(56.3269)
+        .longitude(44.0059)
+        .description("Описание точки аренды")
+        .build();
 
-        RentalPoint pointBeforeSave = RentalPoint.builder()
-                .address("Н.Новгород, Бурнаковская 103")
-                .latitude(56.3269)
-                .longitude(44.0059)
-                .description("Описание точки аренды")
-                .build();
+    RentalPoint pointBeforeSave = RentalPoint.builder()
+        .address("Н.Новгород, Бурнаковская 103")
+        .latitude(56.3269)
+        .longitude(44.0059)
+        .description("Описание точки аренды")
+        .build();
 
-        UUID savedId = UUID.randomUUID();
-        RentalPoint savedPoint = RentalPoint.builder()
-                .id(savedId)
-                .address("Н.Новгород, Бурнаковская 103")
-                .latitude(56.3269)
-                .longitude(44.0059)
-                .description("Описание точки аренды")
-                .addedOn(LocalDateTime.now())
-                .updatedOn(LocalDateTime.now())
-                .build();
+    UUID savedId = UUID.randomUUID();
+    RentalPoint savedPoint = RentalPoint.builder()
+        .id(savedId)
+        .address("Н.Новгород, Бурнаковская 103")
+        .latitude(56.3269)
+        .longitude(44.0059)
+        .description("Описание точки аренды")
+        .addedOn(LocalDateTime.now())
+        .updatedOn(LocalDateTime.now())
+        .build();
 
-        RentalPointResponseDto responseDto = new RentalPointResponseDto(
-                savedPoint.getId(),
-                savedPoint.getAddress(),
-                savedPoint.getLatitude(),
-                savedPoint.getLongitude(),
-                savedPoint.getDescription(),
-                savedPoint.getAddedOn(),
-                savedPoint.getUpdatedOn(),
-                List.of()
-        );
+    RentalPointResponseDto responseDto = new RentalPointResponseDto(
+        savedPoint.getId(),
+        savedPoint.getAddress(),
+        savedPoint.getLatitude(),
+        savedPoint.getLongitude(),
+        savedPoint.getDescription(),
+        savedPoint.getAddedOn(),
+        savedPoint.getUpdatedOn(),
+        List.of()
+    );
 
-        when(pointMapper.mapCreateToRentalPoint(createDto)).thenReturn(pointBeforeSave);
-        when(rentalPointRepository.saveRentalPoint(pointBeforeSave)).thenReturn(savedPoint);
-        when(pointMapper.mapRentalPointToResponse(savedPoint)).thenReturn(responseDto);
+    when(pointMapper.mapCreateToRentalPoint(createDto)).thenReturn(pointBeforeSave);
+    when(rentalPointRepository.saveRentalPoint(pointBeforeSave)).thenReturn(savedPoint);
+    when(pointMapper.mapRentalPointToResponse(savedPoint)).thenReturn(responseDto);
 
-        RentalPointResponseDto result = rentalPointService.addRentalPoint(createDto);
+    RentalPointResponseDto result = rentalPointService.addRentalPoint(createDto);
 
-        assertNotNull(result);
-        assertEquals(savedId, result.id());
-        assertEquals(createDto.address(), result.address());
-        verify(rentalPointRepository).saveRentalPoint(pointBeforeSave);
-    }
+    assertNotNull(result);
+    assertEquals(savedId, result.id());
+    assertEquals(createDto.address(), result.address());
+    verify(rentalPointRepository).saveRentalPoint(pointBeforeSave);
+  }
 
-    @Test
-    @DisplayName("Получение точки аренды по id")
-    void findRentalPointByIdShouldBePositive() {
-        UUID id = UUID.randomUUID();
-        RentalPoint savedPoint = RentalPoint.builder()
-                .id(id)
-                .address("Н.Новгород, Бурнаковская 103")
-                .latitude(56.3269)
-                .longitude(44.0059)
-                .description("Описание точки аренды")
-                .addedOn(LocalDateTime.now())
-                .updatedOn(LocalDateTime.now())
-                .build();
+  @Test
+  @DisplayName("Получение точки аренды по id")
+  void findRentalPointByIdShouldBePositive() {
+    UUID id = UUID.randomUUID();
+    RentalPoint savedPoint = RentalPoint.builder()
+        .id(id)
+        .address("Н.Новгород, Бурнаковская 103")
+        .latitude(56.3269)
+        .longitude(44.0059)
+        .description("Описание точки аренды")
+        .addedOn(LocalDateTime.now())
+        .updatedOn(LocalDateTime.now())
+        .build();
 
-        RentalPointResponseDto responseDto = new RentalPointResponseDto(
-                savedPoint.getId(),
-                savedPoint.getAddress(),
-                savedPoint.getLatitude(),
-                savedPoint.getLongitude(),
-                savedPoint.getDescription(),
-                savedPoint.getAddedOn(),
-                savedPoint.getUpdatedOn(),
-                List.of()
-        );
+    RentalPointResponseDto responseDto = new RentalPointResponseDto(
+        savedPoint.getId(),
+        savedPoint.getAddress(),
+        savedPoint.getLatitude(),
+        savedPoint.getLongitude(),
+        savedPoint.getDescription(),
+        savedPoint.getAddedOn(),
+        savedPoint.getUpdatedOn(),
+        List.of()
+    );
 
-        when(rentalPointRepository.findRentalPointById(id)).thenReturn(Optional.of(savedPoint));
-        when(pointMapper.mapRentalPointToResponse(savedPoint)).thenReturn(responseDto);
+    when(rentalPointRepository.findRentalPointById(id)).thenReturn(Optional.of(savedPoint));
+    when(pointMapper.mapRentalPointToResponse(savedPoint)).thenReturn(responseDto);
 
-        RentalPointResponseDto result = rentalPointService.findRentalPointById(id);
+    RentalPointResponseDto result = rentalPointService.findRentalPointById(id);
 
-        assertNotNull(result);
-        assertEquals(savedPoint.getAddress(), result.address());
-        verify(rentalPointRepository).findRentalPointById(id);
-    }
+    assertNotNull(result);
+    assertEquals(savedPoint.getAddress(), result.address());
+    verify(rentalPointRepository).findRentalPointById(id);
+  }
 
-    @Test
-    @DisplayName("Поиск точки аренды по несуществующему ID должен бросать исключение")
-    void findRentalPointByIdShouldThrowWhenNotFound() {
-        UUID id = UUID.randomUUID();
-        when(rentalPointRepository.findRentalPointById(id)).thenReturn(Optional.empty());
+  @Test
+  @DisplayName("Поиск точки аренды по несуществующему ID должен бросать исключение")
+  void findRentalPointByIdShouldThrowWhenNotFound() {
+    UUID id = UUID.randomUUID();
+    when(rentalPointRepository.findRentalPointById(id)).thenReturn(Optional.empty());
 
-        assertThrows(RentalPointNotFoundException.class, () -> rentalPointService.findRentalPointById(id));
-        verify(pointMapper, never()).mapRentalPointToResponse(any());
-    }
+    assertThrows(RentalPointNotFoundException.class, () -> rentalPointService.findRentalPointById(id));
+    verify(pointMapper, never()).mapRentalPointToResponse(any());
+  }
 
-    @Test
-    @DisplayName("Получение всех точек аренды с пагинацией")
-    void findAllRentalPointsShouldBePositive() {
-        RentalPoint point = RentalPoint.builder()
-                .id(UUID.randomUUID())
-                .address("Н.Новгород, Бурнаковская 103")
-                .latitude(56.3269)
-                .longitude(44.0059)
-                .description("Описание точки аренды")
-                .build();
+  @Test
+  @DisplayName("Получение всех точек аренды с пагинацией")
+  void findAllRentalPointsShouldBePositive() {
+    RentalPoint point = RentalPoint.builder()
+        .id(UUID.randomUUID())
+        .address("Н.Новгород, Бурнаковская 103")
+        .latitude(56.3269)
+        .longitude(44.0059)
+        .description("Описание точки аренды")
+        .build();
 
-        RentalPointResponseDto dto = new RentalPointResponseDto(
-                point.getId(),
-                point.getAddress(),
-                point.getLatitude(),
-                point.getLongitude(),
-                point.getDescription(),
-                point.getAddedOn(),
-                point.getUpdatedOn(),
-                List.of()
-        );
+    RentalPointResponseDto dto = new RentalPointResponseDto(
+        point.getId(),
+        point.getAddress(),
+        point.getLatitude(),
+        point.getLongitude(),
+        point.getDescription(),
+        point.getAddedOn(),
+        point.getUpdatedOn(),
+        List.of()
+    );
 
-        when(rentalPointRepository.findAllRentalPoints(anyInt(), anyInt(), anyString()))
-                .thenReturn(List.of(point));
-        when(pointMapper.mapRentalPointToResponse(point)).thenReturn(dto);
+    when(rentalPointRepository.findAllRentalPoints(anyInt(), anyInt(), anyString()))
+        .thenReturn(List.of(point));
+    when(pointMapper.mapRentalPointToResponse(point)).thenReturn(dto);
 
-        Collection<RentalPointResponseDto> result =
-                rentalPointService.findAllRentalPoints(0, 10, RentalPointSortField.TOTAL_SCOOTERS);
+    Collection<RentalPointResponseDto> result =
+        rentalPointService.findAllRentalPoints(0, 10, RentalPointSortField.TOTAL_SCOOTERS);
 
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(rentalPointRepository).findAllRentalPoints(0, 10, "TOTAL_SCOOTERS");
-    }
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    verify(rentalPointRepository).findAllRentalPoints(0, 10, "TOTAL_SCOOTERS");
+  }
 
-    @Test
-    @DisplayName("Обновление точки аренды")
-    void updateRentalPointShouldBePositive() {
-        UUID id = UUID.randomUUID();
+  @Test
+  @DisplayName("Обновление точки аренды")
+  void updateRentalPointShouldBePositive() {
+    UUID id = UUID.randomUUID();
 
-        RentalPointUpdateDto updateDto = new RentalPointUpdateDto(
-                "Н.Новгород, новая улица 1",
-                56.3300,
-                44.0100,
-                "Обновлённое описание"
-        );
+    RentalPointUpdateDto updateDto = new RentalPointUpdateDto(
+        "Н.Новгород, новая улица 1",
+        56.3300,
+        44.0100,
+        "Обновлённое описание"
+    );
 
-        RentalPoint existingPoint = RentalPoint.builder()
-                .id(id)
-                .address("Старый адрес")
-                .latitude(56.3200)
-                .longitude(44.0000)
-                .description("Старое описание")
-                .build();
+    RentalPoint existingPoint = RentalPoint.builder()
+        .id(id)
+        .address("Старый адрес")
+        .latitude(56.3200)
+        .longitude(44.0000)
+        .description("Старое описание")
+        .build();
 
-        RentalPoint updatedPoint = RentalPoint.builder()
-                .id(id)
-                .address("Н.Новгород, новая улица 1")
-                .latitude(56.3300)
-                .longitude(44.0100)
-                .description("Обновлённое описание")
-                .build();
+    RentalPoint updatedPoint = RentalPoint.builder()
+        .id(id)
+        .address("Н.Новгород, новая улица 1")
+        .latitude(56.3300)
+        .longitude(44.0100)
+        .description("Обновлённое описание")
+        .build();
 
-        RentalPointResponseDto responseDto = new RentalPointResponseDto(
-                id,
-                updatedPoint.getAddress(),
-                updatedPoint.getLatitude(),
-                updatedPoint.getLongitude(),
-                updatedPoint.getDescription(),
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                List.of()
-        );
+    RentalPointResponseDto responseDto = new RentalPointResponseDto(
+        id,
+        updatedPoint.getAddress(),
+        updatedPoint.getLatitude(),
+        updatedPoint.getLongitude(),
+        updatedPoint.getDescription(),
+        LocalDateTime.now(),
+        LocalDateTime.now(),
+        List.of()
+    );
 
-        when(rentalPointRepository.findRentalPointById(id)).thenReturn(Optional.of(existingPoint));
-        when(rentalPointRepository.updateRentalPoint(any())).thenReturn(updatedPoint);
-        when(pointMapper.mapRentalPointToResponse(updatedPoint)).thenReturn(responseDto);
+    when(rentalPointRepository.findRentalPointById(id)).thenReturn(Optional.of(existingPoint));
+    when(rentalPointRepository.updateRentalPoint(any())).thenReturn(updatedPoint);
+    when(pointMapper.mapRentalPointToResponse(updatedPoint)).thenReturn(responseDto);
 
-        RentalPointResponseDto result = rentalPointService.updateRentalPoint(id, updateDto);
+    RentalPointResponseDto result = rentalPointService.updateRentalPoint(id, updateDto);
 
-        assertNotNull(result);
-        assertEquals("Н.Новгород, новая улица 1", result.address());
-        verify(rentalPointRepository).updateRentalPoint(any());
-    }
+    assertNotNull(result);
+    assertEquals("Н.Новгород, новая улица 1", result.address());
+    verify(rentalPointRepository).updateRentalPoint(any());
+  }
 
-    @Test
-    @DisplayName("Обновление несуществующей точки аренды")
-    void updateRentalPointShouldThrowWhenNotFound() {
-        UUID id = UUID.randomUUID();
-        RentalPointUpdateDto dto = new RentalPointUpdateDto(
-                "Адрес",
-                56.3269,
-                44.0059,
-                "Описание"
-        );
+  @Test
+  @DisplayName("Обновление несуществующей точки аренды")
+  void updateRentalPointShouldThrowWhenNotFound() {
+    UUID id = UUID.randomUUID();
+    RentalPointUpdateDto dto = new RentalPointUpdateDto(
+        "Адрес",
+        56.3269,
+        44.0059,
+        "Описание"
+    );
 
-        when(rentalPointRepository.findRentalPointById(id)).thenReturn(Optional.empty());
+    when(rentalPointRepository.findRentalPointById(id)).thenReturn(Optional.empty());
 
-        assertThrows(RentalPointNotFoundException.class,
-                () -> rentalPointService.updateRentalPoint(id, dto));
-    }
+    assertThrows(RentalPointNotFoundException.class,
+        () -> rentalPointService.updateRentalPoint(id, dto));
+  }
 
-    @Test
-    @DisplayName("Удаление точки аренды")
-    void deleteRentalPointByIdShouldBePositive() {
-        UUID id = UUID.randomUUID();
-        RentalPoint point = RentalPoint.builder().id(id).build();
+  @Test
+  @DisplayName("Удаление точки аренды")
+  void deleteRentalPointByIdShouldBePositive() {
+    UUID id = UUID.randomUUID();
+    RentalPoint point = RentalPoint.builder().id(id).build();
 
-        when(rentalPointRepository.findRentalPointById(id)).thenReturn(Optional.of(point));
+    when(rentalPointRepository.findRentalPointById(id)).thenReturn(Optional.of(point));
 
-        rentalPointService.deleteRentalPointById(id);
+    rentalPointService.deleteRentalPointById(id);
 
-        verify(rentalPointRepository).deleteRentalPoint(point);
-    }
+    verify(rentalPointRepository).deleteRentalPoint(point);
+  }
 
-    @Test
-    @DisplayName("Удаление несуществующей точки аренды")
-    void deleteRentalPointByIdShouldThrowWhenNotFound() {
-        UUID id = UUID.randomUUID();
-        when(rentalPointRepository.findRentalPointById(id)).thenReturn(Optional.empty());
+  @Test
+  @DisplayName("Удаление несуществующей точки аренды")
+  void deleteRentalPointByIdShouldThrowWhenNotFound() {
+    UUID id = UUID.randomUUID();
+    when(rentalPointRepository.findRentalPointById(id)).thenReturn(Optional.empty());
 
-        assertThrows(RentalPointNotFoundException.class,
-                () -> rentalPointService.deleteRentalPointById(id));
-    }
+    assertThrows(RentalPointNotFoundException.class,
+        () -> rentalPointService.deleteRentalPointById(id));
+  }
 }

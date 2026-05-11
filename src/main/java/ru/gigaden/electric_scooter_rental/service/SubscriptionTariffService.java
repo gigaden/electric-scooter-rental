@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface SubscriptionTariffService {
 
-    SubscriptionTariff findByTariffId(UUID tariffId);
+  SubscriptionTariff findByTariffId(UUID tariffId);
 }

@@ -23,66 +23,66 @@ import static org.mockito.Mockito.when;
 @DisplayName("Тесты сервиса ролей")
 class RoleServiceImplTest {
 
-    @InjectMocks
-    private RoleServiceImpl roleService;
+  @InjectMocks
+  private RoleServiceImpl roleService;
 
-    @Mock
-    private RoleRepository roleRepository;
+  @Mock
+  private RoleRepository roleRepository;
 
-    @Test
-    @DisplayName("Поиск роли по её имени")
-    void findRoleByNameShouldBePositive() {
-        String roleName = "USER";
-        UUID id = UUID.randomUUID();
-        Role expectedRole = Role.builder()
-                .id(id)
-                .name(roleName)
-                .build();
+  @Test
+  @DisplayName("Поиск роли по её имени")
+  void findRoleByNameShouldBePositive() {
+    String roleName = "USER";
+    UUID id = UUID.randomUUID();
+    Role expectedRole = Role.builder()
+        .id(id)
+        .name(roleName)
+        .build();
 
-        when(roleRepository.findRoleByName(roleName)).thenReturn(Optional.of(expectedRole));
+    when(roleRepository.findRoleByName(roleName)).thenReturn(Optional.of(expectedRole));
 
-        Role result = roleService.findRowRoleByNameOrThrow(roleName);
+    Role result = roleService.findRowRoleByNameOrThrow(roleName);
 
-        assertEquals(roleName, result.getName());
-        verify(roleRepository).findRoleByName(roleName);
+    assertEquals(roleName, result.getName());
+    verify(roleRepository).findRoleByName(roleName);
 
-    }
+  }
 
-    @Test
-    @DisplayName("Роль не найдена - выброс исключения")
-    void findRoleShouldThrowWhenRoleNameNotFound() {
+  @Test
+  @DisplayName("Роль не найдена - выброс исключения")
+  void findRoleShouldThrowWhenRoleNameNotFound() {
 
-        when(roleRepository.findRoleByName(any())).thenReturn(Optional.empty());
+    when(roleRepository.findRoleByName(any())).thenReturn(Optional.empty());
 
-        assertThrows(RoleNotFoundException.class, () -> roleService.findRowRoleByNameOrThrow("GODFATHER"));
-    }
+    assertThrows(RoleNotFoundException.class, () -> roleService.findRowRoleByNameOrThrow("GODFATHER"));
+  }
 
-    @Test
-    @DisplayName("Поиск роли по её id")
-    void findRoleByIdShouldBePositive() {
-        String roleName = "USER";
-        UUID id = UUID.randomUUID();
-        Role expectedRole = Role.builder()
-                .id(id)
-                .name(roleName)
-                .build();
+  @Test
+  @DisplayName("Поиск роли по её id")
+  void findRoleByIdShouldBePositive() {
+    String roleName = "USER";
+    UUID id = UUID.randomUUID();
+    Role expectedRole = Role.builder()
+        .id(id)
+        .name(roleName)
+        .build();
 
-        when(roleRepository.findRoleById(id)).thenReturn(Optional.of(expectedRole));
+    when(roleRepository.findRoleById(id)).thenReturn(Optional.of(expectedRole));
 
-        Role result = roleService.findRowRoleByIdOrThrow(id);
+    Role result = roleService.findRowRoleByIdOrThrow(id);
 
-        assertEquals(id, result.getId());
-        verify(roleRepository).findRoleById(id);
+    assertEquals(id, result.getId());
+    verify(roleRepository).findRoleById(id);
 
-    }
+  }
 
-    @Test
-    @DisplayName("Роль по id не найдена - выброс исключения")
-    void findRoleShouldThrowWhenRoleIdNotFound() {
+  @Test
+  @DisplayName("Роль по id не найдена - выброс исключения")
+  void findRoleShouldThrowWhenRoleIdNotFound() {
 
-        when(roleRepository.findRoleById(any())).thenReturn(Optional.empty());
+    when(roleRepository.findRoleById(any())).thenReturn(Optional.empty());
 
-        assertThrows(RoleNotFoundException.class, () -> roleService.findRowRoleByIdOrThrow(UUID.randomUUID()));
-    }
+    assertThrows(RoleNotFoundException.class, () -> roleService.findRowRoleByIdOrThrow(UUID.randomUUID()));
+  }
 
 }

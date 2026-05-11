@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,70 +34,73 @@ import java.util.UUID;
 @Tag(name = "Самокаты", description = "Контроллер для управления самокатами")
 public class ScooterController {
 
-    private final ScooterService scooterService;
+  private final ScooterService scooterService;
 
-    /**
-     * Создаём новый самокат
-     */
-    @PostMapping
-    @Operation(summary = "Добавление самоката", description = "Добавление нового самоката в БД")
-    public ResponseEntity<ScooterResponseDto> addScooter(@Valid @RequestBody ScooterCreateDto dto) {
-        log.info("Создаём новый самокат {}", dto);
-        ScooterResponseDto response = scooterService.addScooter(dto);
+  /**
+   * Создаём новый самокат
+   */
+  @PostMapping
+  @PreAuthorize("hasRole('ADMIN')")
+  @Operation(summary = "Добавление самоката", description = "Добавление нового самоката в БД")
+  public ScooterResponseDto addScooter(@Valid @RequestBody ScooterCreateDto dto) {
 
-        return ResponseEntity.ok(response);
-    }
+    log.info("Создаём новый самокат {}", dto);
 
-    /**
-     * Получаем самокат по его id
-     */
-    @GetMapping("/{scooterId}")
-    @Operation(summary = "Получение самоката", description = "Получение самоката по его id")
-    public ResponseEntity<ScooterResponseDto> getScooter(@PathVariable UUID scooterId) {
-        log.info("Получаем самокат с id = {}", scooterId);
-        ScooterResponseDto response = scooterService.findScooterById(scooterId);
+    return scooterService.addScooter(dto);
+  }
 
-        return ResponseEntity.ok(response);
-    }
+  /**
+   * Получаем самокат по его id
+   */
+  @GetMapping("/{scooterId}")
+  @Operation(summary = "Получение самоката", description = "Получение самоката по его id")
+  public ScooterResponseDto getScooter(@PathVariable UUID scooterId) {
 
-    /**
-     * Получаем все самокаты
-     */
-    @GetMapping
-    @Operation(summary = "Получение самокатов", description = "Получение самокатов с пагинацией и сортировкой")
-    public ResponseEntity<Collection<ScooterResponseDto>> findAllScooters(@RequestParam(defaultValue = "0") int page,
-                                                                          @RequestParam(defaultValue = "10") int size,
-                                                                          @RequestParam(defaultValue = "BATTERY") String sort) {
-        log.info("Получаем самокаты page={}, size={}, sort={}", page, size, sort);
-        ScooterSortField sortField = ScooterSortField.fromString(sort);
-        Collection<ScooterResponseDto> response = scooterService.findAll(page, size, sortField);
+    log.debug("Получаем самокат с id = {}", scooterId);
 
-        return ResponseEntity.ok(response);
-    }
+    return scooterService.findScooterById(scooterId);
+  }
 
-    /**
-     * Обновляем самокат
-     */
-    @PutMapping("/{scooterId}")
-    @Operation(summary = "Обновление самоката", description = "Обновление самоката по его id")
-    public ResponseEntity<ScooterResponseDto> updateScooterById(@PathVariable(name = "scooterId") UUID scooterId,
-                                                                @Valid @RequestBody ScooterUpdateDto dto) {
-        log.info("Обновляем самокат с id {}", scooterId);
-        ScooterResponseDto response = scooterService.updateScooterById(scooterId, dto);
+  /**
+   * Получаем все самокаты
+   */
+  @GetMapping
+  @Operation(summary = "Получение самокатов", description = "Получение самокатов с пагинацией и сортировкой")
+  public Collection<ScooterResponseDto> findAllScooters(@RequestParam(defaultValue = "0") int page,
+                                                        @RequestParam(defaultValue = "10") int size,
+                                                        @RequestParam(defaultValue = "BATTERY") String sort) {
 
-        return ResponseEntity.ok(response);
-    }
+    log.debug("Получаем самокаты page={}, size={}, sort={}", page, size, sort);
+    ScooterSortField sortField = ScooterSortField.fromString(sort);
 
-    /**
-     * Удаляем самокат
-     */
-    @DeleteMapping("/{scooterId}")
-    @Operation(summary = "Удаление самоката", description = "Удаление самоката по его id")
-    public ResponseEntity<String> deleteScooterById(@PathVariable(name = "scooterId") UUID scooterId) {
-        log.info("Удаляем самокат с id {}", scooterId);
-        scooterService.deleteScooterById(scooterId);
+    return scooterService.findAll(page, size, sortField);
+  }
 
-        return ResponseEntity.ok("Самокат удалён");
-    }
+  /**
+   * Обновляем самокат
+   */
+  @PutMapping("/{scooterId}")
+  @PreAuthorize("hasRole('ADMIN')")
+  @Operation(summary = "Обновление самоката", description = "Обновление самоката по его id")
+  public ScooterResponseDto updateScooterById(@PathVariable(name = "scooterId") UUID scooterId,
+                                              @Valid @RequestBody ScooterUpdateDto dto) {
+
+    log.info("Обновляем самокат с id {}", scooterId);
+
+    return scooterService.updateScooterById(scooterId, dto);
+  }
+
+  /**
+   * Удаляем самокат
+   */
+  @DeleteMapping("/{scooterId}")
+  @PreAuthorize("hasRole('ADMIN')")
+  @Operation(summary = "Удаление самоката", description = "Удаление самоката по его id")
+  public void deleteScooterById(@PathVariable(name = "scooterId") UUID scooterId) {
+
+    log.info("Удаляем самокат с id {}", scooterId);
+
+    scooterService.deleteScooterById(scooterId);
+  }
 
 }

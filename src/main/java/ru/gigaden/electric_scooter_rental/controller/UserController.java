@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.gigaden.electric_scooter_rental.dto.user.UserCreateDto;
 import ru.gigaden.electric_scooter_rental.dto.user.UserResponseDto;
@@ -35,73 +36,76 @@ import java.util.UUID;
 @Tag(name = "Пользователи", description = "Контроллер для управления пользователями")
 public class UserController {
 
-    private final UserService userService;
+  private final UserService userService;
 
-    /**
-     * Создаём нового пользователя
-     */
-    @PostMapping
-    @Operation(summary = "Добавление пользователя", description = "Добавление нового пользователя в БД")
-    public ResponseEntity<UserResponseDto> addUser(@Valid @RequestBody UserCreateDto dto) {
-        log.info("Создаём нового пользователя {}", dto);
-        UserResponseDto response = userService.addUser(dto);
+  /**
+   * Создаём нового пользователя
+   */
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
+  @Operation(summary = "Добавление пользователя", description = "Добавление нового пользователя в БД")
+  public UserResponseDto addUser(@Valid @RequestBody UserCreateDto dto) {
 
-        return ResponseEntity.ok(response);
-    }
+    log.info("Создаём нового пользователя {}", dto);
 
-    /**
-     * Получаем пользователя по его id
-     */
-    @GetMapping("/{userId}")
-    @Operation(summary = "Получение пользователя", description = "Получение пользователя по его id")
-    public ResponseEntity<UserResponseDto> getUser(@PathVariable UUID userId) {
-        log.info("Получаем пользователя с id = {}", userId);
-        UserResponseDto response = userService.findUserById(userId);
+    return userService.addUser(dto);
+  }
 
-        return ResponseEntity.ok(response);
-    }
+  /**
+   * Получаем пользователя по его id
+   */
+  @GetMapping("/{userId}")
+  @Operation(summary = "Получение пользователя", description = "Получение пользователя по его id")
+  public UserResponseDto getUser(@PathVariable UUID userId) {
 
-    /**
-     * Получаем всех пользователей
-     */
-    @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Получение пользователей", description = "(Админ) Получение пользователей с пагинацией и сортировкой")
-    public ResponseEntity<Collection<UserResponseDto>> findAllUsers(@RequestParam(defaultValue = "0") int page,
-                                                                    @RequestParam(defaultValue = "10") int size,
-                                                                    @RequestParam(defaultValue = "USERNAME") String sort) {
-        log.info("Получаем пользователей page={}, size={}, sort={}", page, size, sort);
-        UserSortField sortField = UserSortField.fromString(sort);
-        Collection<UserResponseDto> response = userService.findAll(page, size, sortField);
+    log.debug("Получаем пользователя с id = {}", userId);
 
-        return ResponseEntity.ok(response);
-    }
+    return userService.findUserById(userId);
+  }
 
-    /**
-     * Обновляем пользователя
-     */
-    @PutMapping("/{userId}")
-    @PreAuthorize("@securityUtil.isOwner(#userId) or hasRole('ADMIN')")
-    @Operation(summary = "Обновление пользователя", description = "Обновление пользователя по его id")
-    public ResponseEntity<UserResponseDto> updateUserById(@PathVariable(name = "userId") UUID userId,
-                                                          @Valid @RequestBody UserUpdateDto dto) {
-        log.info("Обновляем пользователя с id {}", userId);
-        UserResponseDto response = userService.updateUserById(userId, dto);
+  /**
+   * Получаем всех пользователей
+   */
+  @GetMapping
+  @PreAuthorize("hasRole('ADMIN')")
+  @Operation(summary = "Получение пользователей", description = "(Админ) Получение пользователей с пагинацией и сортировкой")
+  public Collection<UserResponseDto> findAllUsers(@RequestParam(defaultValue = "0") int page,
+                                                  @RequestParam(defaultValue = "10") int size,
+                                                  @RequestParam(defaultValue = "USERNAME") String sort) {
+    log.debug("Получаем пользователей page={}, size={}, sort={}", page, size, sort);
 
-        return ResponseEntity.ok(response);
-    }
+    UserSortField sortField = UserSortField.fromString(sort);
 
-    /**
-     * Удаляем пользователя
-     */
-    @DeleteMapping("/{userId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Удаление пользователя", description = "Удаление пользователя по его id")
-    public ResponseEntity<String> deleteUserById(@PathVariable(name = "userId") UUID userId) {
-        log.info("Удаляем пользователя с id {}", userId);
-        userService.deleteUserById(userId);
+    return userService.findAll(page, size, sortField);
+  }
 
-        return ResponseEntity.ok("Пользователь удалён");
-    }
+  /**
+   * Обновляем пользователя
+   */
+  @PutMapping("/{userId}")
+  @PreAuthorize("@securityUtil.isOwner(#userId) or hasRole('ADMIN')")
+  @Operation(summary = "Обновление пользователя", description = "Обновление пользователя по его id")
+  public UserResponseDto updateUserById(@PathVariable(name = "userId") UUID userId,
+                                        @Valid @RequestBody UserUpdateDto dto) {
+
+    log.info("Обновляем пользователя с id {}", userId);
+
+    return userService.updateUserById(userId, dto);
+  }
+
+  /**
+   * Удаляем пользователя
+   */
+  @DeleteMapping("/{userId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @PreAuthorize("hasRole('ADMIN')")
+  @Operation(summary = "Удаление пользователя", description = "Удаление пользователя по его id")
+  public void deleteUserById(@PathVariable(name = "userId") UUID userId) {
+
+    log.info("Удаляем пользователя с id {}", userId);
+
+    userService.deleteUserById(userId);
+
+  }
 
 }

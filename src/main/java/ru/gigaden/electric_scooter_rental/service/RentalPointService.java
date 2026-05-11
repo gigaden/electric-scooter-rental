@@ -14,17 +14,17 @@ import java.util.UUID;
  */
 public interface RentalPointService {
 
-    RentalPointResponseDto addRentalPoint(RentalPointCreateDto dto);
+  RentalPointResponseDto addRentalPoint(RentalPointCreateDto dto);
 
-    RentalPointResponseDto findRentalPointById(UUID id);
+  RentalPointResponseDto findRentalPointById(UUID id);
 
-    RentalPoint findRowRentalPointOrThrow(UUID id);
+  RentalPoint findRowRentalPointOrThrow(UUID id);
 
-    Collection<RentalPointResponseDto> findAllRentalPoints(int page, int size, RentalPointSortField sortField);
+  Collection<RentalPointResponseDto> findAllRentalPoints(int page, int size, RentalPointSortField sortField);
 
-    RentalPointResponseDto updateRentalPoint(UUID id, RentalPointUpdateDto dto);
+  RentalPointResponseDto updateRentalPoint(UUID id, RentalPointUpdateDto dto);
 
-    void deleteRentalPointById(UUID id);
+  void deleteRentalPointById(UUID id);
 
-    Collection<RentalPointResponseDto> findRentalPointsByRadius(double latitude, double longitude, double radiusKm, int page, int size);
+  Collection<RentalPointResponseDto> findRentalPointsByRadius(double latitude, double longitude, double radiusKm, int page, int size);
 }

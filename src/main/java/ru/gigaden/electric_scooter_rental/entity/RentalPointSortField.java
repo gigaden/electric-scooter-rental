@@ -7,6 +7,6 @@ import lombok.Getter;
  */
 @Getter
 public enum RentalPointSortField {
-    TOTAL_SCOOTERS,
-    AVAILABLE_SCOOTERS
+  TOTAL_SCOOTERS,
+  AVAILABLE_SCOOTERS
 }

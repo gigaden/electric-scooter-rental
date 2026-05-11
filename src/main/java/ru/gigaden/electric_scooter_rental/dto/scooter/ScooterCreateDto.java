@@ -11,34 +11,34 @@ import lombok.Builder;
 import java.util.UUID;
 
 /**
- * Dto для создания самоката
+ * Dto для создания самоката.
  */
 @Builder
 @Schema(description = "Дто для создания самоката")
 public record ScooterCreateDto(
-        @NotNull(message = "Id точки аренды должен быть указан")
-        UUID rentalPointId,
+    @NotNull(message = "Id точки аренды должен быть указан")
+    UUID rentalPointId,
 
-        @NotNull(message = "Модель должна быть указана")
-        @NotBlank(message = "Поле с моделью не должно быть пустыми")
-        @Size(min = 2, max = 512, message = "Поле с моделью должно быть от 2 до 512 символов")
-        @Schema(description = "Модель самоката", example = "Nimbus2000")
-        String model,
+    @NotNull(message = "Модель должна быть указана")
+    @NotBlank(message = "Поле с моделью не должно быть пустыми")
+    @Size(min = 2, max = 512, message = "Поле с моделью должно быть от 2 до 512 символов")
+    @Schema(description = "Модель самоката", example = "Nimbus2000")
+    String model,
 
-        @NotNull(message = "Описание должно быть указано")
-        @NotBlank(message = "Поле с описанием не должно быть пустыми")
-        @Size(min = 8, max = 1024, message = "Поле с описанием должно быть от 8 до 2048 символов")
-        @Schema(description = "Описание самоката", example = "Описание самоката")
-        String description,
+    @NotNull(message = "Описание должно быть указано")
+    @NotBlank(message = "Поле с описанием не должно быть пустыми")
+    @Size(min = 8, max = 1024, message = "Поле с описанием должно быть от 8 до 2048 символов")
+    @Schema(description = "Описание самоката", example = "Описание самоката")
+    String description,
 
-        @NotNull(message = "Заряд батареи должен быть указан")
-        @Max(value = 100, message = "Значение заряда батареи не может быть больше 100")
-        @Min(value = 0, message = "Заряд батареи не может быть меньше нуля")
-        @Schema(description = "Заряд батареи самоката в процентах", example = "100")
-        Integer batteryPower,
+    @NotNull(message = "Заряд батареи должен быть указан")
+    @Max(value = 100, message = "Значение заряда батареи не может быть больше 100")
+    @Min(value = 0, message = "Заряд батареи не может быть меньше нуля")
+    @Schema(description = "Заряд батареи самоката в процентах", example = "100")
+    Integer batteryPower,
 
-        @NotNull(message = "Пробег самоката должен быть указан")
-        @Min(value = 0, message = "Пробег самоката не может быть меньше нуля")
-        @Schema(description = "Пробег самоката", example = "130")
-        Integer mileage) {
+    @NotNull(message = "Пробег самоката должен быть указан")
+    @Min(value = 0, message = "Пробег самоката не может быть меньше нуля")
+    @Schema(description = "Пробег самоката", example = "130")
+    Integer mileage) {
 }

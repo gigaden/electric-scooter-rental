@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 /**
- * Dto для обновления точки аренды
+ * Dto для обновления точки аренды.
  */
 @Schema(description = "Дто для обновления точки аренды")
 public record RentalPointUpdateDto(@NotNull(message = "Адрес должен быть указан")

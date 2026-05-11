@@ -10,15 +10,15 @@ import java.util.UUID;
  * Репозиторий для работы с точками аренды
  */
 public interface RentalPointRepository {
-    RentalPoint saveRentalPoint(RentalPoint rentalPoint);
+  RentalPoint saveRentalPoint(RentalPoint rentalPoint);
 
-    Optional<RentalPoint> findRentalPointById(UUID id);
+  Optional<RentalPoint> findRentalPointById(UUID id);
 
-    Collection<RentalPoint> findAllRentalPoints(int page, int size, String sortBy);
+  Collection<RentalPoint> findAllRentalPoints(int page, int size, String sortBy);
 
-    RentalPoint updateRentalPoint(RentalPoint rentalPoint);
+  RentalPoint updateRentalPoint(RentalPoint rentalPoint);
 
-    void deleteRentalPoint(RentalPoint rentalPoint);
+  void deleteRentalPoint(RentalPoint rentalPoint);
 
-    Collection<RentalPoint> findRentalPointsByRadius(double latitude, double longitude, double radiusKm, int page, int size);
+  Collection<RentalPoint> findRentalPointsByRadius(double latitude, double longitude, double radiusKm, int page, int size);
 }

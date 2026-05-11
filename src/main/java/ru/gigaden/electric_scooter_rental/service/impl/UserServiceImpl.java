@@ -2,9 +2,11 @@ package ru.gigaden.electric_scooter_rental.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.gigaden.electric_scooter_rental.dto.UserRegisteredEvent;
 import ru.gigaden.electric_scooter_rental.dto.user.UserCreateDto;
 import ru.gigaden.electric_scooter_rental.dto.user.UserResponseDto;
 import ru.gigaden.electric_scooter_rental.dto.user.UserUpdateDto;
@@ -18,8 +20,8 @@ import ru.gigaden.electric_scooter_rental.repository.UserRepository;
 import ru.gigaden.electric_scooter_rental.security.SecurityUtil;
 import ru.gigaden.electric_scooter_rental.service.RoleService;
 import ru.gigaden.electric_scooter_rental.service.UserService;
+import ru.gigaden.electric_scooter_rental.service.kafka.NotificationProducer;
 
-import org.springframework.security.access.AccessDeniedException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,171 +35,180 @@ import java.util.UUID;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
-    private final RoleService roleService;
-    private final UserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
-    private final SecurityUtil securityUtil;
+  private final UserRepository userRepository;
+  private final RoleService roleService;
+  private final UserMapper userMapper;
+  private final PasswordEncoder passwordEncoder;
+  private final SecurityUtil securityUtil;
+  private final NotificationProducer notificationProducer;
 
 
-    /**
-     * Создание нового клиента
-     *
-     * @param dto - дто для нового пользователя
-     * @return - дто с созданным пользователем
-     */
-    @Transactional
-    @Override
-    public UserResponseDto addUser(UserCreateDto dto) {
-        checkUserUsername(dto.username());
-        checkUserEmail(dto.email());
+  /**
+   * Создание нового клиента
+   *
+   * @param dto - дто для нового пользователя
+   * @return - дто с созданным пользователем
+   */
+  @Transactional
+  @Override
+  public UserResponseDto addUser(UserCreateDto dto) {
+    checkUserUsername(dto.username());
+    checkUserEmail(dto.email());
 
-        User newUser = prepareNewUser(dto);
-        User savedUser = userRepository.saveUser(newUser);
+    User newUser = prepareNewUser(dto);
+    User savedUser = userRepository.saveUser(newUser);
 
-        UserResponseDto response = userMapper.mapUserToResponseDto(savedUser);
-        log.info("Добавлен новый пользователь {}", response);
+    UserRegisteredEvent event = new UserRegisteredEvent(
+        savedUser.getId(),
+        savedUser.getUsername(),
+        savedUser.getEmail(),
+        savedUser.getRegisteredOn()
+    );
+    notificationProducer.sendUserRegisteredEvent(event);
 
-        return response;
+    UserResponseDto response = userMapper.mapUserToResponseDto(savedUser);
+    log.info("Добавлен новый пользователь {}", response);
+
+    return response;
+  }
+
+  /**
+   * Метод возвращает пользователя по его id
+   *
+   * @param id - id пользователя для поиска
+   * @return - дто с пользователем
+   * @throws UserNotFoundException если пользователь не найден
+   */
+  @Override
+  public UserResponseDto findUserById(UUID id) {
+    User user = findRowUserOrThrow(id);
+    UserResponseDto response = userMapper.mapUserToResponseDto(user);
+    log.debug("Получили пользователя с id = {}", id);
+
+    return response;
+  }
+
+  /**
+   * Получаем всех пользователей с пагинацией и сортировкой
+   *
+   * @param page - номер страницы
+   * @param size - размер
+   * @param sort - поле, по которому сортируем
+   */
+  @Override
+  public Collection<UserResponseDto> findAll(int page, int size, UserSortField sort) {
+    Collection<UserResponseDto> response = userRepository.findAllUsers(page, size, sort.getField()).stream()
+        .map(userMapper::mapUserToResponseDto).toList();
+    log.debug("Получили список пользователей в количестве {}", response.size());
+
+    return response;
+  }
+
+  /**
+   * Метод обновляет пользователя по его id
+   *
+   * @param userId - id пользователя
+   * @param dto    - данные для обновления
+   * @throws UserNotFoundException - если пользователь не найден
+   */
+  @Transactional
+  @Override
+  public UserResponseDto updateUserById(UUID userId, UserUpdateDto dto) {
+
+    securityUtil.checkOwnerOrAdmin(userId);
+
+    User existingUser = findRowUserOrThrow(userId);
+    updateUserFields(existingUser, dto);
+    User updatedUser = userRepository.updateUser(existingUser);
+    UserResponseDto response = userMapper.mapUserToResponseDto(updatedUser);
+    log.info("Пользователь с id {} обновлён", userId);
+
+    return response;
+  }
+
+  /**
+   * Метод удаляет пользователя по его id
+   *
+   * @param id - id пользователя
+   * @throws UserNotFoundException - если пользователь не найден
+   * @throws AccessDeniedException - если пользователь не админ
+   */
+  @Transactional
+  @Override
+  public void deleteUserById(UUID id) {
+
+    if (!securityUtil.isAdmin()) {
+      throw new AccessDeniedException("Удалить пользователя может только админ");
     }
 
-    /**
-     * Метод возвращает пользователя по его id
-     *
-     * @param id - id пользователя для поиска
-     * @return - дто с пользователем
-     * @throws UserNotFoundException если пользователь не найден
-     */
-    @Override
-    public UserResponseDto findUserById(UUID id) {
-        User user = findRowUserOrThrow(id);
-        UserResponseDto response = userMapper.mapUserToResponseDto(user);
-        log.info("Получили пользователя с id = {}", id);
+    User user = findRowUserOrThrow(id);
+    userRepository.deleteUserByEntity(user);
+    log.info("Пользователь с id {} удалён", id);
+  }
 
-        return response;
+  /**
+   * Обновляем сущность пользователя данными из дто
+   */
+  private void updateUserFields(User existingUser, UserUpdateDto dto) {
+    if (dto.username() != null) {
+      checkUserUsername(dto.username());
+      existingUser.setUsername(dto.username());
     }
-
-    /**
-     * Получаем всех пользователей с пагинацией и сортировкой
-     *
-     * @param page - номер страницы
-     * @param size - размер
-     * @param sort - поле, по которому сортируем
-     */
-    @Override
-    public Collection<UserResponseDto> findAll(int page, int size, UserSortField sort) {
-        Collection<UserResponseDto> response = userRepository.findAllUsers(page, size, sort.getField()).stream()
-                .map(userMapper::mapUserToResponseDto).toList();
-        log.info("Получили список пользователей в количестве {}", response.size());
-
-        return response;
+    if (dto.email() != null) {
+      checkUserEmail(dto.email());
+      existingUser.setEmail(dto.email());
     }
-
-    /**
-     * Метод обновляет пользователя по его id
-     *
-     * @param userId - id пользователя
-     * @param dto    - данные для обновления
-     * @throws UserNotFoundException - если пользователь не найден
-     */
-    @Transactional
-    @Override
-    public UserResponseDto updateUserById(UUID userId, UserUpdateDto dto) {
-
-        securityUtil.checkOwnerOrAdmin(userId);
-
-        User existingUser = findRowUserOrThrow(userId);
-        updateUserFields(existingUser, dto);
-        User updatedUser = userRepository.updateUser(existingUser);
-        UserResponseDto response = userMapper.mapUserToResponseDto(updatedUser);
-        log.info("Пользователь с id {} обновлён", userId);
-
-        return response;
+    if (dto.password() != null) {
+      existingUser.setPassword(dto.password());
     }
+  }
 
-    /**
-     * Метод удаляет пользователя по его id
-     *
-     * @param id - id пользователя
-     * @throws UserNotFoundException - если пользователь не найден
-     * @throws AccessDeniedException - если пользователь не админ
-     */
-    @Transactional
-    @Override
-    public void deleteUserById(UUID id) {
+  /**
+   * Метод получает по незамапенный объект пользователя
+   */
+  private User findRowUserOrThrow(UUID id) {
+    return userRepository.findUserById(id)
+        .orElseThrow(() -> {
+          log.error("Пользователь id = {} не найден", id);
+          return new UserNotFoundException("Пользователь не найден");
+        });
+  }
 
-        if (!securityUtil.isAdmin()) {
-            throw new AccessDeniedException("Удалить пользователя может только админ");
-        }
-
-        User user = findRowUserOrThrow(id);
-        userRepository.deleteUserByEntity(user);
-        log.info("Пользователь с id {} удалён", id);
+  /**
+   * Проверяем уникальность email
+   */
+  private void checkUserEmail(String email) {
+    if (!userRepository.checkEmailIsUnique(email)) {
+      log.error("Email пользователя не уникален {}", email);
+      throw new UserNotUniqueException("Email не уникален");
     }
+  }
 
-    /**
-     * Обновляем сущность пользователя данными из дто
-     */
-    private void updateUserFields(User existingUser, UserUpdateDto dto) {
-        if (dto.username() != null) {
-            checkUserUsername(dto.username());
-            existingUser.setUsername(dto.username());
-        }
-        if (dto.email() != null) {
-            checkUserEmail(dto.email());
-            existingUser.setEmail(dto.email());
-        }
-        if (dto.password() != null) {
-            existingUser.setPassword(dto.password());
-        }
+  /**
+   * Проверяем уникальность имени пользователя
+   */
+  private void checkUserUsername(String username) {
+    if (!userRepository.checkUsernameIsUnique(username)) {
+      log.warn("Имя пользователя не уникально {}", username);
+      throw new UserNotUniqueException("Имя пользователя не уникально");
     }
+  }
 
-    /**
-     * Метод получает по незамапенный объект пользователя
-     */
-    private User findRowUserOrThrow(UUID id) {
-        return userRepository.findUserById(id)
-                .orElseThrow(() -> {
-                    log.error("Пользователь id = {} не найден", id);
-                    return new UserNotFoundException("Пользователь не найден");
-                });
-    }
+  /**
+   * Метод подготавливает нового пользователя для сохранения
+   *
+   * @param dto - дто пользователя
+   * @return - готовый объект для сохранения
+   */
+  private User prepareNewUser(UserCreateDto dto) {
+    User user = userMapper.mapCreateDtoToUser(dto);
 
-    /**
-     * Проверяем уникальность email
-     */
-    private void checkUserEmail(String email) {
-        if (!userRepository.checkEmailIsUnique(email)) {
-            log.error("Email пользователя не уникален {}", email);
-            throw new UserNotUniqueException("Email не уникален");
-        }
-    }
+    String encodedPassword = passwordEncoder.encode(dto.password());
+    user.setPassword(encodedPassword);
 
-    /**
-     * Проверяем уникальность имени пользователя
-     */
-    private void checkUserUsername(String username) {
-        if (!userRepository.checkUsernameIsUnique(username)) {
-            log.warn("Имя пользователя не уникально {}", username);
-            throw new UserNotUniqueException("Имя пользователя не уникально");
-        }
-    }
+    Role defaultRole = roleService.findRowRoleByNameOrThrow("USER");
+    user.setRoles(new HashSet<>(Set.of(defaultRole)));
 
-    /**
-     * Метод подготавливает нового пользователя для сохранения
-     *
-     * @param dto - дто пользователя
-     * @return - готовый объект для сохранения
-     */
-    private User prepareNewUser(UserCreateDto dto) {
-        User user = userMapper.mapCreateDtoToUser(dto);
-
-        String encodedPassword = passwordEncoder.encode(dto.password());
-        user.setPassword(encodedPassword);
-
-        Role defaultRole = roleService.findRowRoleByNameOrThrow("USER");
-        user.setRoles(new HashSet<>(Set.of(defaultRole)));
-
-        return user;
-    }
+    return user;
+  }
 }

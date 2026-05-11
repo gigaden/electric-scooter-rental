@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * Дто аренды для ответа клиенту
- * */
+ * Дто аренды для ответа клиенту.
+ */
 public record RentalResponseDto(UUID id,
                                 UUID userId,
                                 UUID scooterId,

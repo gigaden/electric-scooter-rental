@@ -7,21 +7,21 @@ import lombok.Getter;
  */
 @Getter
 public enum ScooterSortField {
-    BATTERY("batteryPower"),
-    MILEAGE("mileage");
+  BATTERY("batteryPower"),
+  MILEAGE("mileage");
 
-    private final String field;
+  private final String field;
 
-    ScooterSortField(String field) {
-        this.field = field;
+  ScooterSortField(String field) {
+    this.field = field;
+  }
+
+  public static ScooterSortField fromString(String value) {
+    for (ScooterSortField sortField : ScooterSortField.values()) {
+      if (sortField.name().equalsIgnoreCase(value) || sortField.field.equalsIgnoreCase(value)) {
+        return sortField;
+      }
     }
-
-    public static ScooterSortField fromString(String value) {
-        for (ScooterSortField sortField : ScooterSortField.values()) {
-            if (sortField.name().equalsIgnoreCase(value) || sortField.field.equalsIgnoreCase(value)) {
-                return sortField;
-            }
-        }
-        throw new IllegalArgumentException("Неизвестное поле сортировки: " + value);
-    }
+    throw new IllegalArgumentException("Неизвестное поле сортировки: " + value);
+  }
 }

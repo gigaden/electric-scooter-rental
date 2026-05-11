@@ -36,119 +36,119 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("Тесты контроллера ролей")
 class RoleControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired
+  private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+  @Autowired
+  private ObjectMapper objectMapper;
 
-    @MockitoBean
-    private RoleService roleService;
+  @MockitoBean
+  private RoleService roleService;
 
-    @Test
-    @DisplayName("POST /roles - успешное создание роли")
-    void addRoleShouldReturnOk() throws Exception {
-        RoleCreateDto requestDto = RoleCreateDto.builder().name("ADMIN").build();
-        UUID roleId = UUID.randomUUID();
-        RoleResponseDto responseDto = new RoleResponseDto(roleId, "ADMIN");
+  @Test
+  @DisplayName("POST /roles - успешное создание роли")
+  void addRoleShouldReturnOk() throws Exception {
+    RoleCreateDto requestDto = RoleCreateDto.builder().name("ADMIN").build();
+    UUID roleId = UUID.randomUUID();
+    RoleResponseDto responseDto = new RoleResponseDto(roleId, "ADMIN");
 
-        when(roleService.createRole(any(RoleCreateDto.class))).thenReturn(responseDto);
+    when(roleService.createRole(any(RoleCreateDto.class))).thenReturn(responseDto);
 
-        mockMvc.perform(post("/roles")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(roleId.toString()))
-                .andExpect(jsonPath("name").value("ADMIN"));
+    mockMvc.perform(post("/roles")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(requestDto)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("id").value(roleId.toString()))
+        .andExpect(jsonPath("name").value("ADMIN"));
 
-        verify(roleService, times(1)).createRole(any(RoleCreateDto.class));
-    }
+    verify(roleService, times(1)).createRole(any(RoleCreateDto.class));
+  }
 
-    @Test
-    @DisplayName("POST /roles - ошибка 400 при невалидном теле запроса")
-    void addRoleInvalidRequestShouldReturnBadRequest() throws Exception {
-        RoleCreateDto invalidDto = RoleCreateDto.builder().name("").build();
+  @Test
+  @DisplayName("POST /roles - ошибка 400 при невалидном теле запроса")
+  void addRoleInvalidRequestShouldReturnBadRequest() throws Exception {
+    RoleCreateDto invalidDto = RoleCreateDto.builder().name("").build();
 
-        mockMvc.perform(post("/roles")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidDto)))
-                .andExpect(status().isBadRequest());
+    mockMvc.perform(post("/roles")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(invalidDto)))
+        .andExpect(status().isBadRequest());
 
-        verify(roleService, never()).createRole(any());
-    }
+    verify(roleService, never()).createRole(any());
+  }
 
-    @Test
-    @DisplayName("PUT /roles/{roleId} - успешное обновление роли")
-    void updateRoleShouldReturnOk() throws Exception {
-        UUID roleId = UUID.randomUUID();
-        RoleUpdateDto requestDto = RoleUpdateDto.builder().name("SUPER_ADMIN").build();
-        RoleResponseDto responseDto = new RoleResponseDto(roleId, "SUPER_ADMIN");
+  @Test
+  @DisplayName("PUT /roles/{roleId} - успешное обновление роли")
+  void updateRoleShouldReturnOk() throws Exception {
+    UUID roleId = UUID.randomUUID();
+    RoleUpdateDto requestDto = RoleUpdateDto.builder().name("SUPER_ADMIN").build();
+    RoleResponseDto responseDto = new RoleResponseDto(roleId, "SUPER_ADMIN");
 
-        when(roleService.updateRole(any(UUID.class), any(RoleUpdateDto.class))).thenReturn(responseDto);
+    when(roleService.updateRole(any(UUID.class), any(RoleUpdateDto.class))).thenReturn(responseDto);
 
-        mockMvc.perform(put("/roles/{roleId}", roleId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(roleId.toString()))
-                .andExpect(jsonPath("name").value("SUPER_ADMIN"));
+    mockMvc.perform(put("/roles/{roleId}", roleId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(requestDto)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("id").value(roleId.toString()))
+        .andExpect(jsonPath("name").value("SUPER_ADMIN"));
 
-        verify(roleService).updateRole(eq(roleId), any());
-    }
+    verify(roleService).updateRole(eq(roleId), any());
+  }
 
-    @Test
-    @DisplayName("PUT /roles/{roleId} - ошибка 400 при невалидном теле запроса")
-    void updateRoleInvalidRequestShouldReturnBadRequest() throws Exception {
-        UUID roleId = UUID.randomUUID();
-        RoleUpdateDto invalidDto = RoleUpdateDto.builder().name("").build();
+  @Test
+  @DisplayName("PUT /roles/{roleId} - ошибка 400 при невалидном теле запроса")
+  void updateRoleInvalidRequestShouldReturnBadRequest() throws Exception {
+    UUID roleId = UUID.randomUUID();
+    RoleUpdateDto invalidDto = RoleUpdateDto.builder().name("").build();
 
-        mockMvc.perform(put("/roles/{roleId}", roleId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidDto)))
-                .andExpect(status().isBadRequest());
+    mockMvc.perform(put("/roles/{roleId}", roleId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(invalidDto)))
+        .andExpect(status().isBadRequest());
 
-        verify(roleService, never()).updateRole(any(), any());
-    }
+    verify(roleService, never()).updateRole(any(), any());
+  }
 
-    @Test
-    @DisplayName("PUT /roles/{roleId} - роль не найдена (404)")
-    void updateRoleNotFoundShouldReturnNotFound() throws Exception {
-        UUID roleId = UUID.randomUUID();
-        RoleUpdateDto requestDto = RoleUpdateDto.builder().name("NEW_NAME").build();
+  @Test
+  @DisplayName("PUT /roles/{roleId} - роль не найдена (404)")
+  void updateRoleNotFoundShouldReturnNotFound() throws Exception {
+    UUID roleId = UUID.randomUUID();
+    RoleUpdateDto requestDto = RoleUpdateDto.builder().name("NEW_NAME").build();
 
-        when(roleService.updateRole(any(UUID.class), any()))
-                .thenThrow(new RoleNotFoundException("Роль не найдена"));
+    when(roleService.updateRole(any(UUID.class), any()))
+        .thenThrow(new RoleNotFoundException("Роль не найдена"));
 
-        mockMvc.perform(put("/roles/{roleId}", roleId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
-                .andExpect(status().isNotFound());
+    mockMvc.perform(put("/roles/{roleId}", roleId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(requestDto)))
+        .andExpect(status().isNotFound());
 
-        verify(roleService, times(1)).updateRole(eq(roleId), any());
-    }
+    verify(roleService, times(1)).updateRole(eq(roleId), any());
+  }
 
-    @Test
-    @DisplayName("DELETE /roles/{roleId} - успешное удаление роли")
-    void deleteRoleShouldReturnOk() throws Exception {
-        UUID roleId = UUID.randomUUID();
+  @Test
+  @DisplayName("DELETE /roles/{roleId} - успешное удаление роли")
+  void deleteRoleShouldReturnOk() throws Exception {
+    UUID roleId = UUID.randomUUID();
 
-        mockMvc.perform(delete("/roles/{roleId}", roleId))
-                .andExpect(status().isOk());
+    mockMvc.perform(delete("/roles/{roleId}", roleId))
+        .andExpect(status().isOk());
 
-        verify(roleService).deleteRoleById(roleId);
-    }
+    verify(roleService).deleteRoleById(roleId);
+  }
 
-    @Test
-    @DisplayName("DELETE /roles/{roleId} - роль не найдена (404)")
-    void deleteRoleNotFoundShouldReturnNotFound() throws Exception {
-        UUID roleId = UUID.randomUUID();
+  @Test
+  @DisplayName("DELETE /roles/{roleId} - роль не найдена (404)")
+  void deleteRoleNotFoundShouldReturnNotFound() throws Exception {
+    UUID roleId = UUID.randomUUID();
 
-        doThrow(new RoleNotFoundException("Роль не найдена"))
-                .when(roleService).deleteRoleById(roleId);
+    doThrow(new RoleNotFoundException("Роль не найдена"))
+        .when(roleService).deleteRoleById(roleId);
 
-        mockMvc.perform(delete("/roles/{roleId}", roleId))
-                .andExpect(status().isNotFound());
+    mockMvc.perform(delete("/roles/{roleId}", roleId))
+        .andExpect(status().isNotFound());
 
-        verify(roleService).deleteRoleById(roleId);
-    }
+    verify(roleService).deleteRoleById(roleId);
+  }
 }

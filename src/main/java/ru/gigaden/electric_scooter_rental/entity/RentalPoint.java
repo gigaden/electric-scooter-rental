@@ -35,41 +35,41 @@ import java.util.UUID;
 @AllArgsConstructor
 public class RentalPoint {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    @Column(name = "address", nullable = false)
-    private String address;
+  @Column(name = "address", nullable = false)
+  private String address;
 
-    @Column(name = "latitude", nullable = false)
-    private Double latitude;
+  @Column(name = "latitude", nullable = false)
+  private Double latitude;
 
-    @Column(name = "longitude", nullable = false)
-    private Double longitude;
+  @Column(name = "longitude", nullable = false)
+  private Double longitude;
 
-    @Column(name = "description", nullable = false)
-    private String description;
+  @Column(name = "description", nullable = false)
+  private String description;
 
-    @Column(name = "added_on", updatable = false)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime addedOn;
+  @Column(name = "added_on", updatable = false)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+  private LocalDateTime addedOn;
 
-    @Column(name = "updated_on", nullable = false)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime updatedOn;
+  @Column(name = "updated_on", nullable = false)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+  private LocalDateTime updatedOn;
 
-    @OneToMany(mappedBy = "rentalPoint")
-    private List<Scooter> scooters = new ArrayList<>();
+  @OneToMany(mappedBy = "rentalPoint")
+  private List<Scooter> scooters = new ArrayList<>();
 
-    @PrePersist
-    protected void onCreate() {
-        addedOn = LocalDateTime.now();
-        updatedOn = LocalDateTime.now();
-    }
+  @PrePersist
+  protected void onCreate() {
+    addedOn = LocalDateTime.now();
+    updatedOn = LocalDateTime.now();
+  }
 
-    @PreUpdate
-    protected void onUpdate() {
-        updatedOn = LocalDateTime.now();
-    }
+  @PreUpdate
+  protected void onUpdate() {
+    updatedOn = LocalDateTime.now();
+  }
 }

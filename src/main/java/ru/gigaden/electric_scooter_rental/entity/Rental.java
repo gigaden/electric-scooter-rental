@@ -35,45 +35,45 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Rental {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+  @ManyToOne
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "scooter_id", nullable = false)
-        private Scooter scooter;
+  @ManyToOne
+  @JoinColumn(name = "scooter_id", nullable = false)
+  private Scooter scooter;
 
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private RentalStatus status;
+  @Column(name = "status")
+  @Enumerated(EnumType.STRING)
+  private RentalStatus status;
 
-    @Column(name = "start_date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime startDate;
+  @Column(name = "start_date")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+  private LocalDateTime startDate;
 
-    @Column(name = "end_date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime endDate;
+  @Column(name = "end_date")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+  private LocalDateTime endDate;
 
-    @Column(name = "start_mileage", nullable = false)
-    private Integer startMileage;
+  @Column(name = "start_mileage", nullable = false)
+  private Integer startMileage;
 
-    @Column(name = "end_mileage")
-    private Integer endMileage;
+  @Column(name = "end_mileage")
+  private Integer endMileage;
 
-    @ManyToOne
-    @JoinColumn(name = "tariff_id")
-    private Tariff tariff;
+  @ManyToOne
+  @JoinColumn(name = "tariff_id")
+  private Tariff tariff;
 
-    @ManyToOne
-    @JoinColumn(name = "subscription_id")
-    private UserSubscription userSubscription;
+  @ManyToOne
+  @JoinColumn(name = "subscription_id")
+  private UserSubscription userSubscription;
 
-    @Column(name = "cost")
-    private BigDecimal rentalCost;
+  @Column(name = "cost")
+  private BigDecimal rentalCost;
 
 }

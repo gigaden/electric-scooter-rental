@@ -13,43 +13,43 @@ import java.util.UUID;
 
 /**
  * Реализация сервиса тарифов.
- * */
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class TariffServiceImpl implements TariffService {
 
-    private final TariffRepository tariffRepository;
+  private final TariffRepository tariffRepository;
 
-    @Transactional
-    @Override
-    public Tariff addTariff(Tariff tariff) {
+  @Transactional
+  @Override
+  public Tariff addTariff(Tariff tariff) {
 
-        Tariff saved = tariffRepository.addTariff(tariff);
-        log.info("Добавлен тариф {}", saved.getName());
+    Tariff saved = tariffRepository.addTariff(tariff);
+    log.info("Добавлен тариф {}", saved.getName());
 
-        return saved;
-    }
+    return saved;
+  }
 
-    @Transactional
-    @Override
-    public void deleteTariffById(UUID tariffId) {
+  @Transactional
+  @Override
+  public void deleteTariffById(UUID tariffId) {
 
-        tariffRepository.deleteTariffById(tariffId);
-        log.info("Удалён тариф с id {}", tariffId);
-    }
+    tariffRepository.deleteTariffById(tariffId);
+    log.info("Удалён тариф с id {}", tariffId);
+  }
 
-    @Override
-    public Tariff findTariffByName(String tariffName) {
+  @Override
+  public Tariff findTariffByName(String tariffName) {
 
-        return tariffRepository.findTariffByName(tariffName)
-            .orElseThrow(() -> new TariffNotFoundException("Тариф не найден: " + tariffName));
-    }
+    return tariffRepository.findTariffByName(tariffName)
+        .orElseThrow(() -> new TariffNotFoundException("Тариф не найден: " + tariffName));
+  }
 
-    @Override
-    public Tariff findTariffById(UUID tariffId) {
+  @Override
+  public Tariff findTariffById(UUID tariffId) {
 
-        return tariffRepository.findTariffById(tariffId)
-            .orElseThrow(() -> new TariffNotFoundException("Тариф не найден"));
-    }
+    return tariffRepository.findTariffById(tariffId)
+        .orElseThrow(() -> new TariffNotFoundException("Тариф не найден"));
+  }
 }

@@ -17,6 +17,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import ru.gigaden.electric_scooter_rental.security.CustomUserDetailsService;
 import ru.gigaden.electric_scooter_rental.security.JwtAuthenticationFilter;
 
+/**
+ * Конфигурация безопасности
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
@@ -24,33 +27,35 @@ import ru.gigaden.electric_scooter_rental.security.JwtAuthenticationFilter;
 @Slf4j
 public class SecurityConfig {
 
-    private final CustomUserDetailsService userDetailsService;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+  private final CustomUserDetailsService userDetailsService;
+  private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
+  @Bean
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    return config.getAuthenticationManager();
+  }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        log.info("SECURITY CONFIG LOADED");
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    log.info("SECURITY CONFIG LOADED");
 
-        http.csrf(csrf -> csrf.disable())
-                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/users", "/roles", "/points", "/scooters","/swagger-ui/**").permitAll()
-                        .requestMatchers("/rentals").authenticated()
-                        .requestMatchers("/rentals/user/**", "/rentals/scooter/**").authenticated()
-                        .requestMatchers("/subscriptions/**").authenticated()
-                        .anyRequest().authenticated())
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    http.csrf(csrf -> csrf.disable())
+        .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/auth/**", "/users", "/roles", "/points", "/scooters", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
-        return http.build();
-    }
+            .requestMatchers("/rentals").authenticated()
+            .requestMatchers("/rentals/user/**", "/rentals/scooter/**").authenticated()
+            .requestMatchers("/subscriptions/**").authenticated()
+
+            .anyRequest().authenticated())
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+    return http.build();
+  }
 }

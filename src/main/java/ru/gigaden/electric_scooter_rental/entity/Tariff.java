@@ -5,7 +5,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,23 +32,23 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Tariff {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+  @Column(name = "name", nullable = false)
+  private String name;
 
-    @Column(name = "type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private TariffType type;
+  @Column(name = "type", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private TariffType type;
 
-    @Column(name = "is_active")
-    private Boolean isActive;
+  @Column(name = "is_active")
+  private Boolean isActive;
 
-    @OneToOne(mappedBy = "tariff", cascade = CascadeType.ALL)
-    private HourlyTariff hourlyTariff;
+  @OneToOne(mappedBy = "tariff", cascade = CascadeType.ALL)
+  private HourlyTariff hourlyTariff;
 
-    @OneToOne(mappedBy = "tariff", cascade = CascadeType.ALL)
-    private SubscriptionTariff subscriptionTariff;
+  @OneToOne(mappedBy = "tariff", cascade = CascadeType.ALL)
+  private SubscriptionTariff subscriptionTariff;
 }

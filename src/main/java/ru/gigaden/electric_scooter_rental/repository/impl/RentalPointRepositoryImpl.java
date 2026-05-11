@@ -14,48 +14,48 @@ import java.util.UUID;
  */
 @Repository
 public class RentalPointRepositoryImpl extends BaseRepositoryHiber<RentalPoint, UUID> implements RentalPointRepository {
-    protected RentalPointRepositoryImpl() {
-        super(RentalPoint.class);
-    }
+  protected RentalPointRepositoryImpl() {
+    super(RentalPoint.class);
+  }
 
-    @Override
-    public RentalPoint saveRentalPoint(RentalPoint rentalPoint) {
-        return save(rentalPoint);
-    }
+  @Override
+  public RentalPoint saveRentalPoint(RentalPoint rentalPoint) {
+    return save(rentalPoint);
+  }
 
-    @Override
-    public Optional<RentalPoint> findRentalPointById(UUID id) {
-        return Optional.ofNullable(find(id));
-    }
+  @Override
+  public Optional<RentalPoint> findRentalPointById(UUID id) {
+    return Optional.ofNullable(find(id));
+  }
 
-    @Override
-    public Collection<RentalPoint> findAllRentalPoints(int page, int size, String sortBy) {
-        return findAll(page, size, sortBy);
-    }
+  @Override
+  public Collection<RentalPoint> findAllRentalPoints(int page, int size, String sortBy) {
+    return findAll(page, size, sortBy);
+  }
 
-    @Override
-    public RentalPoint updateRentalPoint(RentalPoint rentalPoint) {
-        return update(rentalPoint);
-    }
+  @Override
+  public RentalPoint updateRentalPoint(RentalPoint rentalPoint) {
+    return update(rentalPoint);
+  }
 
-    @Override
-    public void deleteRentalPoint(RentalPoint rentalPoint) {
-        delete(rentalPoint);
-    }
+  @Override
+  public void deleteRentalPoint(RentalPoint rentalPoint) {
+    delete(rentalPoint);
+  }
 
-    @Override
-    public Collection<RentalPoint> findRentalPointsByRadius(double latitude, double longitude, double radiusKm, int page, int size) {
-        String jpql = "SELECT p FROM RentalPoint p WHERE " +
-                      "6371 * acos(cos(radians(:lat)) * cos(radians(p.latitude)) * " +
-                      "cos(radians(p.longitude) - radians(:lon)) + " +
-                      "sin(radians(:lat)) * sin(radians(p.latitude))) <= :radius " +
-                      "ORDER BY p.address";
-        TypedQuery<RentalPoint> query = entityManager.createQuery(jpql, RentalPoint.class)
-            .setParameter("lat", latitude)
-            .setParameter("lon", longitude)
-            .setParameter("radius", radiusKm)
-            .setFirstResult(page * size)
-            .setMaxResults(size);
-        return query.getResultList();
-    }
+  @Override
+  public Collection<RentalPoint> findRentalPointsByRadius(double latitude, double longitude, double radiusKm, int page, int size) {
+    String jpql = "SELECT p FROM RentalPoint p WHERE " +
+                  "6371 * acos(cos(radians(:lat)) * cos(radians(p.latitude)) * " +
+                  "cos(radians(p.longitude) - radians(:lon)) + " +
+                  "sin(radians(:lat)) * sin(radians(p.latitude))) <= :radius " +
+                  "ORDER BY p.address";
+    TypedQuery<RentalPoint> query = entityManager.createQuery(jpql, RentalPoint.class)
+        .setParameter("lat", latitude)
+        .setParameter("lon", longitude)
+        .setParameter("radius", radiusKm)
+        .setFirstResult(page * size)
+        .setMaxResults(size);
+    return query.getResultList();
+  }
 }

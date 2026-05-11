@@ -6,11 +6,11 @@ import java.util.UUID;
 
 public interface TariffService {
 
-    Tariff addTariff(Tariff tariff);
+  Tariff addTariff(Tariff tariff);
 
-    void deleteTariffById(UUID tariffId);
+  void deleteTariffById(UUID tariffId);
 
-    Tariff findTariffByName(String tariffName);
+  Tariff findTariffByName(String tariffName);
 
-    Tariff findTariffById(UUID tariffId);
+  Tariff findTariffById(UUID tariffId);
 }
