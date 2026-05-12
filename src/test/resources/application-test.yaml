@@ -1,0 +1,25 @@
+# src/test/resources/application-test.yaml
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:16.1:///scooters_test
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+  liquibase:
+    enabled: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: test-group
+      auto-offset-reset: earliest
+
+jwt:
+  expiration: 3600000
+
+logging:
+  level:
+    ru.gigaden.electric_scooter_rental: DEBUG
+    org.hibernate.SQL: DEBUG
