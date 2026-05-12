@@ -8,7 +8,6 @@ import ru.gigaden.electric_scooter_rental.dto.point.RentalPointCreateDto;
 import ru.gigaden.electric_scooter_rental.dto.point.RentalPointResponseDto;
 import ru.gigaden.electric_scooter_rental.dto.point.RentalPointUpdateDto;
 import ru.gigaden.electric_scooter_rental.entity.RentalPoint;
-import ru.gigaden.electric_scooter_rental.entity.RentalPointSortField;
 import ru.gigaden.electric_scooter_rental.exception.RentalPointNotFoundException;
 import ru.gigaden.electric_scooter_rental.mapper.RentalPointMapper;
 import ru.gigaden.electric_scooter_rental.repository.RentalPointRepository;
@@ -66,18 +65,17 @@ public class RentalPointServiceImpl implements RentalPointService {
   /**
    * Получаем все точки аренды с пагинацией и сортировкой
    *
-   * @param page      - номер страницы
-   * @param size      - размер
-   * @param sortField - поле, по которому сортируем
+   * @param page - номер страницы
+   * @param size - размер
    */
   @Override
-  public Collection<RentalPointResponseDto> findAllRentalPoints(int page, int size, RentalPointSortField sortField) {
+  public Collection<RentalPointResponseDto> findAllRentalPoints(int page, int size) {
 
     Collection<RentalPointResponseDto> points = rentalPointRepository
-        .findAllRentalPoints(page, size, sortField.name()).stream()
+        .findAllRentalPoints(page, size).stream()
         .map(pointMapper::mapRentalPointToResponse)
         .toList();
-    log.debug("Получили список точек аренды page = {}, size = {}, sort = {}", page, size, sortField);
+    log.debug("Получили список точек аренды page = {}, size = {}", page, size);
 
     return points;
   }

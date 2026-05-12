@@ -5,3 +5,5 @@ databaseChangeLog:
       file: classpath:/db/changelog/002-insert-roles.sql
   - include:
       file: classpath:/db/changelog/003-insert-base-tariffs.sql
+  - include:
+      file: classpath:/db/changelog/004-insert-admin.sql

@@ -1,41 +1,162 @@
-# [Схема базы данных](https://drawdb.vercel.app/editor/diagrams/6bba6286-2f69-446e-a9da-64612d8c4fbf)
+# ⚡ Electric Scooter Rental System API
 
-# Read Me First
+RESTful веб-приложение для управления бизнесом по аренде электросамокатов. Реализует полный цикл:  
+регистрацию пользователей, управление точками проката и парком самокатов, тарификацию аренд,  
+подписки и роли с JWT-аутентификацией и авторизацией на уровне методов.
 
-The following was discovered as part of building this project:
+---
 
-* The original package name 'ru.gigaden.electric-scooter-rental' is invalid and this project uses '
-  ru.gigaden.electric_scooter_rental' instead.
+# 🚀 Основные возможности
 
-# Getting Started
+<table>
+  <thead>
+    <tr>
+      <th>Модуль</th>
+      <th>Функционал</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>👥 Пользователи</td>
+      <td>
+        Регистрация, редактирование профиля, управление ролями
+        <code>USER</code>,
+        <code>ADMIN</code>
+      </td>
+    </tr>
+    <tr>
+      <td>🔐 Безопасность</td>
+      <td>
+        JWT-аутентификация,
+        <code>@PreAuthorize</code>,
+        защита эндпоинтов по ролям и владению ресурсом
+      </td>
+    </tr>
+    <tr>
+      <td>📍 Точки аренды</td>
+      <td>
+        CRUD, пагинация, сортировка, поиск по георадиусу
+      </td>
+    </tr>
+    <tr>
+      <td>🛴 Самокаты</td>
+      <td>
+        CRUD, отслеживание статуса, заряда батареи, пробега, привязка к точке
+      </td>
+    </tr>
+    <tr>
+      <td>📅 Аренды</td>
+      <td>
+        Создание, завершение, автоматический расчёт стоимости,
+        история по пользователям и самокатам
+      </td>
+    </tr>
+    <tr>
+      <td>💰 Тарифы</td>
+      <td>
+        Почасовые и подписочные тарифы, скидки, гибкая тарификация
+      </td>
+    </tr>
+    <tr>
+      <td>📊 Общее</td>
+      <td>
+        Валидация DTO, пагинация/сортировка,
+        глобальная обработка ошибок, Swagger/OpenAPI
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-### Reference Documentation
+---
 
-For further reference, please consider the following sections:
+# 🚀 Запуск проекта
 
-* [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
-* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/3.5.14-SNAPSHOT/maven-plugin)
-* [Create an OCI image](https://docs.spring.io/spring-boot/3.5.14-SNAPSHOT/maven-plugin/build-image.html)
-* [Spring Web](https://docs.spring.io/spring-boot/3.5.14-SNAPSHOT/reference/web/servlet.html)
-* [Spring Data JPA](https://docs.spring.io/spring-boot/3.5.14-SNAPSHOT/reference/data/sql.html#data.sql.jpa-and-spring-data)
-* [SpringDoc OpenAPI](https://springdoc.org/)
-* [Liquibase Migration](https://docs.spring.io/spring-boot/3.5.14-SNAPSHOT/how-to/data-initialization.html#howto.data-initialization.migration-tool.liquibase)
+## ✅ Требования
 
-### Guides
+- Java 17+
+- Maven 3.8+
+- Docker & Docker Compose (для PostgreSQL)
 
-The following guides illustrate how to use some features concretely:
+---
 
-* [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
-* [Serving Web Content with Spring MVC](https://spring.io/guides/gs/serving-web-content/)
-* [Building REST services with Spring](https://spring.io/guides/tutorials/rest/)
-* [Accessing Data with JPA](https://spring.io/guides/gs/accessing-data-jpa/)
-* [SpringDoc OpenAPI](https://github.com/springdoc/springdoc-openapi-demos/)
+## Сборка и запуск
 
-### Maven Parent overrides
+### ___В secrets.yml нужно вставить свои креды от google, для работы email уведомлений___
 
-Due to Maven's design, elements are inherited from the parent POM to the project POM.
-While most of the inheritance is fine, it also inherits unwanted elements like `<license>` and `<developers>` from the
-parent.
-To prevent this, the project POM contains empty overrides for these elements.
-If you manually switch to a different parent and actually want the inheritance, you need to remove those overrides.
+запустить в докере вместе с приложением
 
+```bash
+  mvn clean install -DskipTests
+  docker-compose up -d
+```
+
+или запустите сервисы кафки и базы данных в докере и
+
+```bash
+    mvn clean install -DskipTests
+    mvn spring-boot:run
+```
+
+--------------
+Приложение запустится на http://localhost:8080.
+Доступен Актуатор по http://localhost:8080/actuator/health
+---------------
+
+## 🔐 Безопасность и авторизация
+
+Система использует stateless JWT-аутентификацию. Запросы к защищённым эндпоинтам должны содержать заголовок:
+
+    Authorization: Bearer <your-jwt-token>
+
+## Роли и доступ
+
+* USER Просмотр точек/самокатов, создание аренд, просмотр своей истории, управление своим профилем
+* ADMIN Полный CRUD над точками, самокатами, пользователями, тарифами; просмотр любой истории
+
+### Защита реализована через:
+
+* SecurityFilterChain (URL-матчеры)
+* @PreAuthorize (метод-уровень)
+* SecurityUtil (проверка владения ресурсом в сервисах)
+
+## 📖 API Документация
+
+После запуска Swagger UI доступен по адресу:
+
+🔗 http://localhost:8080/swagger-ui.html
+
+#### Здесь вы найдёте:
+
+* Полное описание всех эндпоинтов
+* Примеры запросов/ответов
+* Форматы DTO
+* Возможность тестирования прямо из браузера
+
+## 🗄 База данных и миграции
+
+Миграции управляются через Liquibase (classpath:/db/changelog/).
+Основные таблицы:
+
+* users, roles, user_roles
+* rental_points, scooters
+* tariffs, hourly_tariffs, subscription_tariffs
+* user_subscriptions, rentals
+
+Liquibase автоматически применяет миграции при старте приложения и заполняет базовые данные (роли, дефолтный тариф).
+
+## Интеграция Kafka
+
+* Kafka используется вместе с email сервисом.
+* При регистрации в кафку отправляется событие.
+* пользователю отправляется сообщение на email которое читается из кафки.
+
+## 📡 Глобальная обработка ошибок
+
+Все исключения перехватываются @RestControllerAdvice и возвращаются в едином формате:
+
+    {
+    "status": "NOT_FOUND",
+    "reason": "Ресурс не найден",
+    "message": "Самокат с id = abc-123 не найден",
+    "timestamp": "2024-05-11 20:15:30"
+    }

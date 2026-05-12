@@ -10,7 +10,6 @@ import ru.gigaden.electric_scooter_rental.dto.point.RentalPointCreateDto;
 import ru.gigaden.electric_scooter_rental.dto.point.RentalPointResponseDto;
 import ru.gigaden.electric_scooter_rental.dto.point.RentalPointUpdateDto;
 import ru.gigaden.electric_scooter_rental.entity.RentalPoint;
-import ru.gigaden.electric_scooter_rental.entity.RentalPointSortField;
 import ru.gigaden.electric_scooter_rental.exception.RentalPointNotFoundException;
 import ru.gigaden.electric_scooter_rental.mapper.RentalPointMapper;
 import ru.gigaden.electric_scooter_rental.repository.RentalPointRepository;
@@ -26,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -162,16 +160,16 @@ class RentalPointServiceImplTest {
         List.of()
     );
 
-    when(rentalPointRepository.findAllRentalPoints(anyInt(), anyInt(), anyString()))
+    when(rentalPointRepository.findAllRentalPoints(anyInt(), anyInt()))
         .thenReturn(List.of(point));
     when(pointMapper.mapRentalPointToResponse(point)).thenReturn(dto);
 
     Collection<RentalPointResponseDto> result =
-        rentalPointService.findAllRentalPoints(0, 10, RentalPointSortField.TOTAL_SCOOTERS);
+        rentalPointService.findAllRentalPoints(0, 10);
 
     assertNotNull(result);
     assertEquals(1, result.size());
-    verify(rentalPointRepository).findAllRentalPoints(0, 10, "TOTAL_SCOOTERS");
+    verify(rentalPointRepository).findAllRentalPoints(0, 10);
   }
 
   @Test

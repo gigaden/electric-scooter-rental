@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import ru.gigaden.electric_scooter_rental.dto.UserRegisteredEvent;
 import ru.gigaden.electric_scooter_rental.dto.user.UserCreateDto;
 import ru.gigaden.electric_scooter_rental.dto.user.UserResponseDto;
 import ru.gigaden.electric_scooter_rental.dto.user.UserUpdateDto;
@@ -17,8 +18,11 @@ import ru.gigaden.electric_scooter_rental.exception.UserNotFoundException;
 import ru.gigaden.electric_scooter_rental.exception.UserNotUniqueException;
 import ru.gigaden.electric_scooter_rental.mapper.UserMapper;
 import ru.gigaden.electric_scooter_rental.repository.UserRepository;
+import ru.gigaden.electric_scooter_rental.security.SecurityUtil;
 import ru.gigaden.electric_scooter_rental.service.RoleService;
+import ru.gigaden.electric_scooter_rental.service.kafka.NotificationProducer;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -53,6 +58,12 @@ class UserServiceImplTest {
   @Mock
   private RoleService roleService;
 
+  @Mock
+  private SecurityUtil securityUtil;
+
+  @Mock
+  private NotificationProducer notificationProducer;
+
   @Test
   @DisplayName("Добавление нового пользователя")
   void addUserShouldBePositive() {
@@ -67,14 +78,17 @@ class UserServiceImplTest {
         .password("encodedPassword")
         .email("mail@mail.ru")
         .build();
+    UUID savedUserId = UUID.randomUUID();
     User savedUser = User.builder()
-        .id(UUID.randomUUID())
+        .id(savedUserId)
         .username("username")
         .password("encodedPassword")
         .email("mail@mail.ru")
+        .registeredOn(LocalDateTime.now())
+        .updatedOn(LocalDateTime.now())
         .build();
     UserResponseDto responseDto = new UserResponseDto(
-        savedUser.getId(),
+        savedUserId,
         savedUser.getUsername(),
         savedUser.getEmail(),
         null, null, Set.of(role));
@@ -92,6 +106,7 @@ class UserServiceImplTest {
     assertNotNull(result);
     assertEquals(dto.username(), result.username());
     verify(userRepository).saveUser(userBeforeSave);
+    verify(notificationProducer).sendUserRegisteredEvent(any(UserRegisteredEvent.class));
   }
 
   @Test
@@ -231,6 +246,8 @@ class UserServiceImplTest {
     when(userRepository.checkEmailIsUnique(dto.email()))
         .thenReturn(true);
 
+    doNothing().when(securityUtil).checkOwnerOrAdmin(id);
+
     when(userRepository.updateUser(any()))
         .thenReturn(updatedUser);
 
@@ -259,6 +276,8 @@ class UserServiceImplTest {
     when(userRepository.findUserById(id))
         .thenReturn(Optional.empty());
 
+    doNothing().when(securityUtil).checkOwnerOrAdmin(id);
+
     assertThrows(UserNotFoundException.class,
         () -> userService.updateUserById(id, dto));
   }
@@ -267,13 +286,11 @@ class UserServiceImplTest {
   @DisplayName("Удаление пользователя")
   void deleteUserByIdShouldBePositive() {
     UUID id = UUID.randomUUID();
+    User user = User.builder().id(id).build();
 
-    User user = User.builder()
-        .id(id)
-        .build();
+    when(userRepository.findUserById(id)).thenReturn(Optional.of(user));
 
-    when(userRepository.findUserById(id))
-        .thenReturn(Optional.of(user));
+    when(securityUtil.isAdmin()).thenReturn(true);
 
     userService.deleteUserById(id);
 
@@ -285,8 +302,9 @@ class UserServiceImplTest {
   void deleteUserByIdShouldThrowWhenUserNotFound() {
     UUID id = UUID.randomUUID();
 
-    when(userRepository.findUserById(id))
-        .thenReturn(Optional.empty());
+    when(userRepository.findUserById(id)).thenReturn(Optional.empty());
+
+    when(securityUtil.isAdmin()).thenReturn(true);
 
     assertThrows(UserNotFoundException.class,
         () -> userService.deleteUserById(id));

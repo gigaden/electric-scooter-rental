@@ -11,7 +11,7 @@
     <groupId>ru.gigaden</groupId>
     <artifactId>electric-scooter-rental</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <properties>
         <java.version>17</java.version>
         <mapstruct.version>1.6.3</mapstruct.version>
@@ -19,6 +19,7 @@
         <jsonwebtoken.version>0.11.5</jsonwebtoken.version>
         <spring.mail.version>3.4.11</spring.mail.version>
         <spring.openapi.version>2.8.16</spring.openapi.version>
+        <testcontainers.version>1.19.8</testcontainers.version>
     </properties>
     <dependencies>
         <dependency>
@@ -104,6 +105,36 @@
             <artifactId>spring-boot-starter-mail</artifactId>
             <version>${spring.mail.version}</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
     </dependencies>
 

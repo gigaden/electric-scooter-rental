@@ -29,8 +29,8 @@ public class RentalPointRepositoryImpl extends BaseRepositoryHiber<RentalPoint, 
   }
 
   @Override
-  public Collection<RentalPoint> findAllRentalPoints(int page, int size, String sortBy) {
-    return findAll(page, size, sortBy);
+  public Collection<RentalPoint> findAllRentalPoints(int page, int size) {
+    return findAll(page, size);
   }
 
   @Override

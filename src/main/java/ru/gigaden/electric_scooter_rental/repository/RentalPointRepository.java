@@ -14,7 +14,7 @@ public interface RentalPointRepository {
 
   Optional<RentalPoint> findRentalPointById(UUID id);
 
-  Collection<RentalPoint> findAllRentalPoints(int page, int size, String sortBy);
+  Collection<RentalPoint> findAllRentalPoints(int page, int size);
 
   RentalPoint updateRentalPoint(RentalPoint rentalPoint);
 

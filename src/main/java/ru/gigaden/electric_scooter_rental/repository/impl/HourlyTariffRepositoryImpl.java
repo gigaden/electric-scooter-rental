@@ -19,6 +19,6 @@ public class HourlyTariffRepositoryImpl extends BaseRepositoryHiber<HourlyTariff
 
   @Override
   public Optional<HourlyTariff> findHourlyTariffByTariffId(UUID tariffId) {
-    return Optional.empty();
+    return Optional.ofNullable(find(tariffId));
   }
 }

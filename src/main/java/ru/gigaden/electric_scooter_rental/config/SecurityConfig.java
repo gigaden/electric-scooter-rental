@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -25,6 +26,7 @@ import ru.gigaden.electric_scooter_rental.security.JwtAuthenticationFilter;
 @EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 @Slf4j
+@Profile("!test")
 public class SecurityConfig {
 
   private final CustomUserDetailsService userDetailsService;

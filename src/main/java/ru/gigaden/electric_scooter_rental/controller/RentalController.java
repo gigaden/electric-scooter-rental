@@ -39,7 +39,7 @@ public class RentalController {
    */
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  @PreAuthorize("authenticated()")
+  @PreAuthorize("isAuthenticated()")
   @Operation(summary = "Добавление аренды", description = "Добавление новой аренды в БД")
   public RentalResponseDto addRental(@Valid @RequestBody RentalCreateDto dto) {
 
@@ -52,7 +52,7 @@ public class RentalController {
    * Получаем аренду по её id.
    */
   @GetMapping("/{rentalId}")
-  @PreAuthorize("authenticated()")
+  @PreAuthorize("isAuthenticated()")
   @Operation(summary = "Получение аренды", description = "Получение аренды по её id")
   public RentalResponseDto getRentalById(@PathVariable UUID rentalId) {
 
@@ -79,7 +79,7 @@ public class RentalController {
    * Завершает аренду.
    */
   @PostMapping("/{rentalId}/complete")
-  @PreAuthorize("authenticated()")
+  @PreAuthorize("isAuthenticated()")
   @Operation(summary = "Завершение аренды", description = "Завершение аренды по её id")
   public RentalResponseDto completeRentalById(@PathVariable(name = "rentalId") UUID rentalId) {
 

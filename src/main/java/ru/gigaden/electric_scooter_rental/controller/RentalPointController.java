@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.gigaden.electric_scooter_rental.dto.point.RentalPointCreateDto;
 import ru.gigaden.electric_scooter_rental.dto.point.RentalPointResponseDto;
 import ru.gigaden.electric_scooter_rental.dto.point.RentalPointUpdateDto;
-import ru.gigaden.electric_scooter_rental.entity.RentalPointSortField;
 import ru.gigaden.electric_scooter_rental.service.RentalPointService;
 
 import java.util.Collection;
@@ -70,12 +69,11 @@ public class RentalPointController {
   @GetMapping
   @Operation(summary = "Получение точек аренды", description = "Получение точек аренды с пагинацией и сортировкой")
   public Collection<RentalPointResponseDto> findAllRentalPoints(@RequestParam(defaultValue = "0") int page,
-                                                                @RequestParam(defaultValue = "10") int size,
-                                                                @RequestParam(defaultValue = "TOTAL_SCOOTERS") RentalPointSortField sort) {
+                                                                @RequestParam(defaultValue = "10") int size) {
 
-    log.debug("Получаем точки аренды page={}, size={}, sort={}", page, size, sort);
+    log.debug("Получаем точки аренды page={}, size={}", page, size);
 
-    return pointService.findAllRentalPoints(page, size, sort);
+    return pointService.findAllRentalPoints(page, size);
   }
 
   /**
